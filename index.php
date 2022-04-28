@@ -180,8 +180,8 @@ else
        $change[$name]=1;
      }
     if(empty(change)){ $messages['thesame']='<div style="color:gray"> Нет изменений.</div>';}//Нет изменений в данных
-    else
-    {
+     else
+     {
       // TODO: перезаписать данные в БД новыми данными,
       // кроме логина и пароля.
       //подготовить запрос
@@ -189,14 +189,15 @@ else
       foreach ($parametrs as $name)
       {
         if(isset($change[$name]))
-        $request.' '.$name.' = '.$form[$name].','
+        $request.' '.$name.' = '.$form[$name].',';
       }
       substr_replace($request,0,–1);//удалить лишнюю запятую
       $request.'  WHERE id = '.$id['id'];
-    $update = $db->exec($request);//обновить данные
-    }
-    }catch(PDOException $e){print('Error:'.$e->GetMessage());exit();}
-   } 
+      $update = $db->exec($request);//обновить данные
+     }
+    }catch(PDOException $e)
+    {print('Error:'.$e->GetMessage());exit();}
+  } 
  else 
  {
   // Генерируем уникальный логин и пароль.
