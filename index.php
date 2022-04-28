@@ -51,7 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     setcookie($errorname, '', time() - 3600);
   }
  }
-//________________________________________________________________________________________
   // Складываем предыдущие значения полей в массив, если есть.
   // При этом санитизуем все данные для безопасного отображения в браузере.
   // $values = array();
@@ -83,11 +82,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
        }
        catch(PDOException $e){print('Error:'.$e->GetMessage());exit();}
       } 
-//_________________________________________________________________________________________
  
  include('form.php');
 }
-else {
+else
+{
   $name=$_POST['name'];
   $email=$_POST['email'];
   $date=$_POST['date'];
@@ -200,19 +199,19 @@ else {
     }
     }catch(PDOException $e){print('Error:'.$e->GetMessage());exit();}
    } 
-  
-else {
-// Генерируем уникальный логин и пароль.
-// TODO: сделать механизм генерации, например функциями rand(), uniquid(), md5(), substr().
-$login = random_bytes(4);
-$pass = random_bytes(3);
-// Сохраняем в Cookies.
-setcookie('login', $login);
-setcookie('pass', $pass);
+ else 
+ {
+  // Генерируем уникальный логин и пароль.
+  // TODO: сделать механизм генерации, например функциями rand(), uniquid(), md5(), substr().
+  $login = random_bytes(4);
+  $pass = random_bytes(3);
+  // Сохраняем в Cookies.
+  setcookie('login', $login);
+  setcookie('pass', $pass);
 
-// Сохранение данных формы, логина и хеш md5() пароля в базу данных.
-$db=new PDO('mysql:host=localhost;dbname=u47586',$user,$pass, array(PDO::ATTR_PERSISTENT=>true));
-try{
+  // Сохранение данных формы, логина и хеш md5() пароля в базу данных.
+  $db=new PDO('mysql:host=localhost;dbname=u47586',$user,$pass, array(PDO::ATTR_PERSISTENT=>true));
+  try{
   $stmt=$db->prepare("INSERT INTO MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=?");
   $stmt->execute(array($name, $email, $date, $gender, $hand, $biography));
   
@@ -221,15 +220,15 @@ try{
 
   $log=$db->prepare("INSERT INTO users SET login = ?, pass = ?");
   $log->execute(array($login, md5($pass)));
-}
-catch(PDOException $e)
-{
-  print('Error:'.$e->GetMessage());
-  exit();
-}
-}
+  }
+  catch(PDOException $e)
+  {
+   print('Error:'.$e->GetMessage());
+   exit();
+  }
+ }
 
     setcookie('save', '1');
     header('Location: index.php');
-  }
+  
 }
