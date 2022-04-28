@@ -10,21 +10,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
   {
     //setcookie('save', '', time()- 100000);
     //$messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
-     // _______________________________________________New
-     if (!empty($_COOKIE['pass'])) 
-     {
+    if (!empty($_COOKIE['pass'])) 
+    {
        $messages['change'] = '<div style="color:green">'.sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong>
        и паролем <strong>%s</strong> для изменения данных.',strip_tags($_COOKIE['login']),strip_tags($_COOKIE['pass'])).'</div>';
-     }
+    }
      setcookie('save', '', time()- 100000);
      setcookie('login', '', time()- 100000);
      setcookie('pass', '', time()- 100000);
      // Выводим сообщение пользователю.
      $messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
      // Если в куках есть пароль, то выводим сообщение.
-   }
-   // _______________________________________________
   }
+  
   $errors = array();
   $values = array();
  
