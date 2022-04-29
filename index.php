@@ -102,7 +102,7 @@ else
     'syperpover'=>$_POST['syperpover'],
   );  
   foreach ($formpoints as  $key =>$v)
-  {setcookie($key, $v, time() + 30 * 24 * 60 * 60);}
+  {setcookie($key, (string)$v, time() + 30 * 24 * 60 * 60);}
 
   $formdata=array
   (
@@ -123,13 +123,13 @@ else
      $errors = TRUE;
     }
     else 
-    if ($key=='email' && $krey!='check' && filter_var($v, FILTER_VALIDATE_EMAIL) == false)
+    if ($key=='email' && $key!='check' && filter_var($v, FILTER_VALIDATE_EMAIL) == false)
        {
          setcookie( $errorname, '2', time() + 24 * 60 * 60);
          setcookie($key, $v, time() + 30 * 24 * 60 * 60);
          $errors = TRUE;
        }
-    else if ($key !='email' && $krey!='check' && preg_match("/[^а-яА-ЯёЁa-zA-Z0-9\ \-_]+/",$v) ) 
+    else if ($key !='email' && $key!='check' && preg_match("/[^а-яА-ЯёЁa-zA-Z0-9\ \-_]+/",$v) ) 
     {
       setcookie( $errorname, '2', time() + 24 * 60 * 60);
       setcookie($key, $v, time() + 30 * 24 * 60 * 60);
@@ -204,11 +204,11 @@ else
    {
      // Генерируем уникальный логин и пароль.
      // TODO: сделать механизм генерации, например функциями rand(), uniquid(), md5(), substr().
-     $login = random_bytes(4);
-     $pass = random_bytes(3);
+     $loginuser = random_bytes(4);
+     $passuser = random_bytes(3);
      // Сохраняем в Cookies.
-     setcookie('login', $login); 
-     setcookie('pass', $pass);
+     setcookie('login', $loginuser); 
+     setcookie('pass', $passuser);
 
      // Сохранение данных формы, логина и хеш md5() пароля в базу данных.
      $db=new PDO('mysql:host=localhost;dbname=u47586',$user,$pass, array(PDO::ATTR_PERSISTENT=>true));
@@ -221,7 +221,7 @@ else
         $super->execute(array($syperpover));
 
         $log=$db->prepare("INSERT INTO users SET login = ?, pass = ?");
-        $log->execute(array($login, md5($pass)));
+        $log->execute(array($loginuser, md5($passuser)));
       }
       catch(PDOException $e)
       {
