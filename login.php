@@ -11,7 +11,7 @@ if (!empty($_SESSION['login']))
   // ++++TODO: Сделать выход (окончание сессии вызовом session_destroy()
   //при нажатии на кнопку Выход).
   printf('Пользователь с логином %s уже авторизован.', $_SESSION['login']);
-  if (isset($_POST['exit']) session_destroy();
+  if (isset($_POST['exit'])) session_destroy();
   // Делаем перенаправление на форму.
   header('Location: form.php');
 }
