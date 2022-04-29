@@ -24,11 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
 
 <form action="" method="post">
 <label> login:<br />
-  <input name="login" value=""/>
+  <input name="login" value="<?php if(isset($loginuser)) print $loginuser; ?>"/>
   </label><br />
 
   <label> password:<br />
-  <input name="pass" value=""/>
+  <input name="pass" value="<?php if(isset($passuser)) print $passuser; ?>"/>
   </label><br />
 
   <input type="submit" value="Войти" />
