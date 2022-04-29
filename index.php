@@ -228,7 +228,7 @@ else
         print('Error:'.$e->GetMessage());
         exit();
       }
-
+      header('Location: login.php');
     }
 
   }
