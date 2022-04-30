@@ -71,6 +71,6 @@ else {
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
         header('Location: index.php');
-      }
+      }//
     }
 }
