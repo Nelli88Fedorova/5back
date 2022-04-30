@@ -31,9 +31,10 @@
 <body>
       <div class="for">
 
-            <?php if (isset($messages['change'])) print($messages['change']); ?>
-            <?php if (isset($messages['change'])) print($messages['change']); ?>
-            <?php if (isset($messages['thesame'])) print($messages['thesame']); ?>
+            <?php
+            $msg = array('enter', 'change', 'save', 'thesame', 'update');
+            foreach ($msg as $m) if (isset($messages[$m])) print($messages[$m]);
+            ?>
             <h4>
                   <form action="" method="POST">
                         <?php if (isset($messages['save'])) print($messages['save']); ?>
@@ -86,6 +87,7 @@
                               Согласен(а) на обработку данных. </label><br />
 
                         <input type="submit" value="Отправить" />
+                        <input name="exit" type="submit" value="Выход" />
                   </form>
             </h4>
       </div>
