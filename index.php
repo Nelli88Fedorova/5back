@@ -3,18 +3,24 @@ header('Content-Type: text/html; charset=UTF-8');
 $user = 'u47586';
 $pass = '3927785';
 $parametrs = array('name', 'email', 'date', 'gender', 'hand', 'biography', 'syperpover', 'check');
+$strinformassage = array(
+  'change' => '<div style="color:green"> Вы можете изменить данные отправленные ранее.</div>',
+  'update' => '<div style="color:green"> Данные обновлены.</div>',
+  'exit' => '<div style="color:green"> Данные обновлены.</div>',
+);
 $messages = array();
-
-if (isset($_COOKIE['change'])) $messages['change'] = '<div style="color:green"> Вы можете изменить данные отправленные ранее.</div>';
-else $messages['change'] = '';
-
-if (isset($_COOKIE['update'])) $messages['update'] = '<div style="color:green"> Данные обновлены.</div>';
-else $messages['update'] = '';
+foreach ($strinformassage as $name => $str) {
+  if (isset($_COOKIE[$name]))
+    $messages[$name] = $str;
+  else $messages[$name] = '';
+  setcookie($name, '', time() - 100000);
+}
 
 //____________________________________________________________GET__________________________________________________
-if ($_SERVER['REQUEST_METHOD'] == 'GET') { //_______________________________________________3)__________Ссылка на login_____________
+//_______________________________________________3)__________Ссылка на login_____________
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (isset($_COOKIE['save'])) {
-    if (!empty($_COOKIE['login']) && isset($_COOKIE['registration'])) {
+    if (!empty($_COOKIE['login'])) {
       setcookie('registration', '', time() - 100000);
       $messages['enter'] = '<div style="color:green">' . sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong>
       и паролем <strong>%s</strong> для изменения данных.', strip_tags($_COOKIE['login']), strip_tags($_COOKIE['pass'])) . '</div>';
@@ -35,7 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') { //___________________________________
     if (isset($_COOKIE[$errorname]))
       $errors[$name] = $_COOKIE[$errorname];
   }
-  $formassage = array('name' => " Имя", 'email' => " Электронная почта", 'date' => " Дата рождения", 'gender' => " Пол", 'hand' => " Конечности", 'biography' => " Биография", 'syperpover' => " Суперспособность", 'check' => " ");
+  $formassage = array(
+    'name' => " Имя", 'email' => " Электронная почта", 'date' => " Дата рождения", 'gender' => " Пол", 'hand' => " Конечности",
+    'biography' => " Биография", 'syperpover' => " Суперспособность", 'check' => " "
+  );
   foreach ($errors as $name => $val) {
     if (isset($name)) {
       $errorname = $name . "_error";
@@ -84,8 +93,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') { //___________________________________
   } //__________________________________________________________________________________________________________________
 
   include('form.php');
-} else //____________________________________________POST__________________________________________________________________
-{
+} //____________________________________________POST__________________________________________________________________
+
+else if ($_POST['exit']) {//Выход
+  setcookie('exit', 1);
+  session_destroy();
+} else if($_POST['login']){ header('Location: login.php');} else {
   $name = $_POST['name'];
   $email = $_POST['email'];
   $date = $_POST['date'];
@@ -174,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') { //___________________________________
       }
       setcookie('update', 1, time() + 30 * 24);
       header('Location: login.php');
-    } else //_______________________2)________________________________Неавторизованный пользователь выдаём login_______________________________
+    } else //__________________Неавторизованный пользователь выдаём login_______________________________
     {
       // Генерируем уникальный логин и пароль.
       $loginuser = random_bytes(4);
