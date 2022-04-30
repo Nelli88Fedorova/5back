@@ -23,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (isset($_COOKIE['save'])) {
     if (!empty($_COOKIE['login'])) {
       setcookie('registration', '', time() - 100000);
-      $messages['enter'] = '<div style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . strip_tags($_COOKIE['login']) . '</strong>
-      и паролем <strong>' . strip_tags($_COOKIE['pass']) . '</strong> для изменения данных.' . '</div>';
+      $messages['enter'] = '<div style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
+      и паролем <strong>' . $_COOKIE['pass'] . '</strong> для изменения данных.' . '</div>';
     }
     setcookie('save', '', time() - 100000);
     setcookie('login', '', time() - 100000);
@@ -212,9 +212,10 @@ if ($_POST['exit'])                    //Выход
 
         $super = $db->prepare("INSERT INTO Superpovers SET superpower=?");
         $super->execute(array($syperpover));
-
+        
+        $mdpass=md5($passuser);
         $log = $db->prepare("INSERT INTO users SET login = ?, pass = ?");
-        $log->execute(array($loginuser, md5($passuser)));
+        $log->execute(array($loginuser, $mdpass ));
       } catch (PDOException $e) {
         print('Error:' . $e->GetMessage());
         exit();
