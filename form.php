@@ -37,8 +37,6 @@
             ?>
             <h4>
                   <form action="" method="POST">
-                        <?php if (isset($messages['save'])) print($messages['save']); ?>
-                        <?php if (isset($messages['name'])) print($messages['name']); ?>
                         <label> Имя:<br />
                               <input name="name" <?php if (isset($errors['name']) && $errors['name'] == 2)  print 'style="color:red"';
                                                       else print 'style="color:black"'; ?> value="<?php print $values['name']; ?>" /></label><br />
@@ -79,14 +77,15 @@
                               <?php if (isset($messages['biography'])) print($messages['biography']); ?>
                               Биография:<br />
                               <textarea name="biography" <?php if (isset($errors['biography']) && $errors['biography'] == 2) print 'style="color:red"';
-                                                            else print 'style="color:black"'; ?> placeholder="<?php print $values['biography']; ?>"></textarea>
+                                                            else print 'style="color:black"'; ?> placeholder=""><?php print $values['biography']; ?> </textarea>
                         </label><br />
                         <br />
                         <?php if (isset($errors['check'])) print('<div style="color:red"> Необходимо согласия на обработку данных!</div>'); ?>
                         <label><input type="checkbox" value="Y" name="check" />
                               Согласен(а) на обработку данных. </label><br />
 
-                        <input type="submit" value="Отправить" />
+                        <input name="send" type="submit" value="Отправить" />
+                        <input name="login" type="submit" value="Войти" />
                         <input name="exit" type="submit" value="Выход" />
                   </form>
             </h4>
