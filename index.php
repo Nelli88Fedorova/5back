@@ -6,7 +6,8 @@ $parametrs = array('name', 'email', 'date', 'gender', 'hand', 'biography', 'sype
 $strinformassage = array(
   'change' => '<div style="color:green"> Вы можете изменить данные отправленные ранее.</div>',
   'update' => '<div style="color:green"> Данные обновлены.</div>',
-  'exit' => '<div style="color:green"> Данные обновлены.</div>',
+  'exit' => '<div style="color:green"> Выход выполнен.</div>',
+  'noexit' => '<div style="color:green">Вы не авторизованы.</div>',
 );
 $messages = array();
 foreach ($strinformassage as $name => $str) {
@@ -22,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (isset($_COOKIE['save'])) {
     if (!empty($_COOKIE['login'])) {
       setcookie('registration', '', time() - 100000);
-      $messages['enter'] = '<div style="color:green">' . sprintf('Вы можете <a href="login.php">войти</a> с логином <strong>%s</strong>
-      и паролем <strong>%s</strong> для изменения данных.', strip_tags($_COOKIE['login']), strip_tags($_COOKIE['pass'])) . '</div>';
+      $messages['enter'] = '<div style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . strip_tags($_COOKIE['login']) . '</strong>
+      и паролем <strong>' . strip_tags($_COOKIE['pass']) . '</strong> для изменения данных.' . '</div>';
     }
     setcookie('save', '', time() - 100000);
     setcookie('login', '', time() - 100000);
@@ -95,10 +96,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   include('form.php');
 } //____________________________________________POST__________________________________________________________________
 
-else if ($_POST['exit']) {//Выход
-  setcookie('exit', 1);
-  session_destroy();
-} else if($_POST['login']){ header('Location: login.php');} else {
+else 
+if ($_POST['exit'])                    //Выход
+{
+  if (session_status() === PHP_SESSION_ACTIVE)
+  { 
+    setcookie('exit', 1);
+    session_destroy();
+  } else setcookie('noexit', 1);
+} else if ($_POST['login']) {               //Регистрация
+  header('Location: login.php');
+} else {                                    //Отправить
   $name = $_POST['name'];
   $email = $_POST['email'];
   $date = $_POST['date'];
