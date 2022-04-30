@@ -198,8 +198,9 @@ if ($_POST['exit'])                    //Выход
     } else //__________________Неавторизованный пользователь выдаём login_______________________________
     {
       // Генерируем уникальный логин и пароль.
-      $loginuser = random_bytes(4);
-      $passuser = rand(10, 99);
+      $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+      $loginuser =  substr(str_shuffle($chars), 0, 3);
+      $passuser =  substr(str_shuffle($chars), 0, 3);
       // Сохраняем в Cookies.
       setcookie('login', $loginuser, time() + 30 * 24 * 60 * 60);
       setcookie('pass', $passuser, time() + 30 * 24 * 60 * 60);
