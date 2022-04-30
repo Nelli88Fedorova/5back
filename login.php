@@ -75,7 +75,7 @@ else
     {
       //echo $value['id']; Выдать сообщение об ошибках.
       $msg['notexist'] = '<div style="color:red"> Пользователь с логином ' . $loginu . ' не существует!</div>';
-    } else if ($value['pass'] != $passu) {
+    } else if ($value['pass'] != md5($passu)) {
       $msg['wrong'] = '<div style="color:red"> Неверный пароль!</div>';
     } else { //Если все ок, то авторизуем пользователя.
       $_SESSION['login'] = $loginu;
