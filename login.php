@@ -2,6 +2,14 @@
 header('Content-Type: text/html; charset=UTF-8');
 session_start();
 
+echo 'start <br />';
+$ar=array();
+foreach($_COOKIE as $key => $value) $ar[]=$value;
+foreach($ar as $key => $v) echo $v.'  ';
+
+// foreach($_COOKIE as $key => $value) unset($_COOKIE[$key]);
+//  //setcookie($key, '', time() - 3600, '/');
+
 $string = array(
   'exitlog1' => '<div style="color:green"> Выход выполнен.</div>',
   'exitlog2' => '<div style="color:green"> Вы не авторизованы.</div>',
@@ -49,7 +57,7 @@ else
   if (isset($_POST['registration'])) //Регистрация
 {
   if (session_status() !== PHP_SESSION_ACTIVE) {
-    header('Location: index.php');
+    //header('Location: index.php');
     exit();
   } else setcookie('registration', '1');
 } else
@@ -84,9 +92,9 @@ if ($_POST['exitlog']) //Выход
     } else { //Если все ок, то авторизуем пользователя.
       $_SESSION['login'] = $loginu;
       $_SESSION['uid'] = $value['id'];
-      header('Location: index.php');
+      //header('Location: index.php');
       exit();
     }
   }
 }
-header('Location: login.php');
+//header('Location: login.php');
