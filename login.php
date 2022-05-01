@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   </form>
 
   <?php
-   $msgs = array('exitlog1', 'exitlog2', 'registration', 'exitlog',);
-   foreach ($msgs as $m) if (isset($messages[$m])) print($msg[$m]);
+  $msgs = array('exitlog1', 'exitlog2', 'registration', 'exitlog',);
+  foreach ($msgs as $m) if (isset($messages[$m])) print($msg[$m]);
   ?>
 
 <?php
@@ -48,9 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 else 
   if (isset($_POST['registration'])) //Регистрация
 {
-  if (session_status() !== PHP_SESSION_ACTIVE) header('Location: index.php');
-  else setcookie('registration', '1');
-} else if ($_POST['exitlog']) //Выход
+  if (session_status() !== PHP_SESSION_ACTIVE) {
+    header('Location: index.php');
+    exit();
+  } else setcookie('registration', '1');
+} else
+if ($_POST['exitlog']) //Выход
 {
   if (!empty($_SESSION['login'])) {
     session_destroy();
@@ -58,6 +61,7 @@ else
   } else setcookie('exitlog2', 1);
 } else
     if (isset($_POST['enterlog'])) //Вход
+{
   if (session_status() === PHP_SESSION_ACTIVE) setcookie('enterlog', 1);
   else {
     //  Проверть есть ли такой логин и пароль в базе данных.
@@ -81,6 +85,8 @@ else
       $_SESSION['login'] = $loginu;
       $_SESSION['uid'] = $value['id'];
       header('Location: index.php');
+      exit();
     }
   }
+}
 header('Location: login.php');
