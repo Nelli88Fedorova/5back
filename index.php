@@ -97,16 +97,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 } //____________________________________________POST__________________________________________________________________
 
 else 
-if ($_POST['exit'])                    //Выход
+if ($_POST['exit'])//Выход
 {
   if (session_status() === PHP_SESSION_ACTIVE)
   { 
     setcookie('exit', 1);
     session_destroy();
   } else setcookie('noexit', 1);
-} else if ($_POST['login']) {               //Регистрация
+} else 
+if ($_POST['login']) //Регистрация
+{               
   header('Location: login.php');
-} else {                                    //Отправить
+  exit();
+} else 
+if ($_POST['send'])//Отправить
+{                                    
   $name = $_POST['name'];
   $email = $_POST['email'];
   $date = $_POST['date'];
@@ -146,7 +151,8 @@ if ($_POST['exit'])                    //Выход
   if ($errors) {
     header('Location: index.php');
     exit();
-  } else {
+  } else 
+  {
     setcookie('name_error', '', time() - 3600);
     setcookie('email_error', '', time() - 3600);
     setcookie('date_error', '', time() - 3600);
@@ -194,7 +200,7 @@ if ($_POST['exit'])                    //Выход
         exit();
       }
       setcookie('update', 1, time() + 30 * 24);
-      header('Location: login.php');
+      header('Location: login.php');exit();
     } else //__________________Неавторизованный пользователь выдаём login_______________________________
     {
       // Генерируем уникальный логин и пароль.
@@ -222,11 +228,11 @@ if ($_POST['exit'])                    //Выход
         exit();
       }
       setcookie('save', 1, time() + 30 * 24 * 60 * 60);
-      header('Location: login.php');
+      // header('Location: login.php');
     } //________________________________________________________________________________________________________________________
 
   }
 
   //setcookie('save', '1');
-  header('Location: index.php');
+  //header('Location: index.php');
 }
