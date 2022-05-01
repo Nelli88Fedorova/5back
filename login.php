@@ -2,11 +2,6 @@
 header('Content-Type: text/html; charset=UTF-8');
 session_start();
 
-echo 'start <br />';
-$ar=array();
-foreach($_COOKIE as $key => $value) $ar[$key]=$value;
-foreach($ar as $key => $v) echo $key.':'.' '.$v.'<br/>';
-
 // foreach($_COOKIE as $key => $value) unset($_COOKIE[$key]);
 //  //setcookie($key, '', time() - 3600, '/');
 
@@ -59,7 +54,11 @@ else
   if (session_status() !== PHP_SESSION_ACTIVE) {
     header('Location: index.php');//Регистрация
     exit();
-  } else setcookie('registration', '1');
+  } else
+  { setcookie('registration', '1');
+    header('Location: login.php');//NoРегистрация
+    exit();
+  }
 } else
 if ($_POST['exitlog']) //Выход
 {
@@ -97,4 +96,8 @@ if ($_POST['exitlog']) //Выход
     }
   }
 }
+$ar=array();
+foreach($_COOKIE as $key => $value) $ar[$key]=$value;
+foreach($ar as $key => $v) echo $key.':'.' '.$v.'<br/>';
+
 //header('Location: login.php');
