@@ -4,8 +4,8 @@ session_start();
 
 echo 'start <br />';
 $ar=array();
-foreach($_COOKIE as $key => $value) $ar[]=$value;
-foreach($ar as $key => $v) echo $v.'  ';
+foreach($_COOKIE as $key => $value) $ar[$key]=$value;
+foreach($ar as $key => $v) echo $key.':'.' '.$v.'<br/>';
 
 // foreach($_COOKIE as $key => $value) unset($_COOKIE[$key]);
 //  //setcookie($key, '', time() - 3600, '/');
@@ -54,10 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 //________________________________POST_______________________________
 else 
-  if (isset($_POST['registration'])) //Регистрация
+  if (isset($_POST['registration'])) 
 {
   if (session_status() !== PHP_SESSION_ACTIVE) {
-    //header('Location: index.php');
+    header('Location: index.php');//Регистрация
     exit();
   } else setcookie('registration', '1');
 } else
