@@ -200,7 +200,7 @@ if ($_POST['send'])//Отправить
         exit();
       }
       setcookie('update', 1, time() + 30 * 24);
-      header('Location: login.php');exit();
+      //header('Location: login.php');exit();
     } else //__________________Неавторизованный пользователь выдаём login_______________________________
     {
       // Генерируем уникальный логин и пароль.
