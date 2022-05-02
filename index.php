@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       exit();
     }
   } //______________________________________________________________________________________________________________________
-  else //____________________1)______________Не выполнен вход, заполнение формы из COOKIE____________________________________
+  else //__________________________________Не выполнен вход, заполнение формы из COOKIE____________________________________
   {
     foreach ($parametrs as $name) {
       if (isset($_COOKIE[$name])) //strip_tags
@@ -243,8 +243,9 @@ else {
         setcookie('save', 1);
         setcookie('login', $loginuser, time() + 30 * 24 * 60 * 60);
         setcookie('pass', $passuser, time() + 30 * 24 * 60 * 60);
-        header('Location: index.php');
-        exit(); //или ссылка
+        include('login.php');
+        // header('Location: index.php');
+        // exit(); //или ссылка
       }
     }
   }
