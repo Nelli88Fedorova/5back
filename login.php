@@ -126,7 +126,7 @@ else {
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
        // include('form.php');
-        header('Location: form.php');
+        header('Location: http://u47586.kubsu-dev.ru/5back/index.php');
         exit();
       }
     }else if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -139,3 +139,4 @@ else {
 $ar = array();
 foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
 foreach ($ar as $key => $v) echo $key . ':' . ' ' . $v . '<br/>';
+
