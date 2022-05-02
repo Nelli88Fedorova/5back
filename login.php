@@ -4,7 +4,7 @@ header('Content-Type: text/html; charset=UTF-8');
 $string = array(
   'exitlog1' => '<div style="color:green"> Выход выполнен.</div>',
   'exitlog2' => '<div style="color:green"> Вы не авторизованы.</div>',
-  'enterlog' => '<div style="color:green"> Вы уже авторизованы, сначала выйдете из аккаунта.</div>',
+  'enterlog' => '<div style="color:green"> Ошибка входа.</div>',
   'enterlogerror' => '<div style="color:green"> заполните все поля.</div>',
   'registration' => '<div style="color:green"> Что бы начать регистрацию выйдете из аккаунта.</div>',
 );
@@ -82,6 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 else {
   setcookie('login', '', time() - 100000);
   setcookie('pass', '', time() - 100000);
+  $loginu = $_POST['login'];
+  $passu = $_POST['pass'];
   $enterlog = 0;
   $exitlog = 0;
   if (isset($_POST['buttlog']))
@@ -102,18 +104,9 @@ else {
   } else
     if ($enterlog == 1) //Вход
   {
-    if (empty($_POST['login']) || empty($_POST['pass'])) {
-      setcookie('enterlogerror', 1);
-      header('Location: login.php'); //Заполните поля
-      exit();
-    } else if (session_status() !== PHP_SESSION_ACTIVE) {
-      setcookie('enterlog', 1);
-      header('Location: login.php'); //Вход уже выполнен
-      exit();
-    } else {
+    if(!empty($loginu) && !empty($passu)){
       //  Проверть есть ли такой логин и пароль в базе данных.
-      $loginu = $_POST['login'];
-      $passu = $_POST['pass'];
+      
       //вход в БД
       $user = 'u47586';
       $pass = '3927785';
@@ -136,7 +129,11 @@ else {
         //header('Location: form.php');
         exit();
       }
-    }
+    }else if (session_status() !== PHP_SESSION_ACTIVE) {
+        setcookie('enterlog', 1);
+        header('Location: login.php'); //Ошибка входа
+        exit();
+      }
   }
 }
 $ar = array();
