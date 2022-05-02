@@ -102,20 +102,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
 } //____________________________________________POST__________________________________________________________________
 
 else 
-if ($_POST['exit'])//Выход
+if (isset($_POST['exit']))
 {
   if (session_status() === PHP_SESSION_ACTIVE)
   { 
     setcookie('exit', 1);
     session_destroy();
   } else setcookie('noexit', 1);
+  header('Location: index.php');//Выход
+  exit();
 } else 
-// if ($_POST['login']) 
+// if (isset($_POST['login'])) 
 // {               
 //   header('Location: login.php');//Вход
 //   exit();
 // } else 
-if ($_POST['send'])//Отправить
+if (isset($_POST['send']))//Отправить
 {                                    
   $name = $_POST['name'];
   $email = $_POST['email'];
