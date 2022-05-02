@@ -3,14 +3,13 @@ header('Content-Type: text/html; charset=UTF-8');
 $user = 'u47586';
 $pass = '3927785';
 $parametrs = array('name', 'email', 'date', 'gender', 'hand', 'biography', 'syperpover', 'check');
+$messages = array();
 
 
-//____________________________________________________________GET__________________
-//_____________________________________________________Ссылка на login_____________
+//___________________________________________________GET__________________
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (isset($_COOKIE['save'])) {
     if (isset($_COOKIE['login'])) {
-      // setcookie('registration', '', time() - 100000);
       $messages['enter'] = '<div style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
       и паролем <strong>' . $_COOKIE['pass'] . '</strong> для изменения данных.' . '</div>';
     }
@@ -31,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     'exit' => '<div style="color:green"> Выход выполнен.</div>',
     'noexit' => '<div style="color:green">Вы не авторизованы.</div>',
   );
-  $messages = array();
   foreach ($strinformassage as $name => $str) {
     if (isset($_COOKIE[$name]))
       $messages[$name] = $str;
@@ -171,8 +169,7 @@ else {
       //____________________________Авторизованный пользователь Меняет данные______________________________________  
 
       // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
-      if ( isset($_SESSION['login']))
-      {
+      if (isset($_SESSION['login'])) {
         echo 'Update  <br/>';
         $update;
         $form = array(
@@ -246,11 +243,10 @@ else {
         setcookie('save', 1);
         setcookie('login', $loginuser, time() + 30 * 24 * 60 * 60);
         setcookie('pass', $passuser, time() + 30 * 24 * 60 * 60);
-        header('Location: index.php');exit(); //или ссылка
+        header('Location: index.php');
+        exit(); //или ссылка
       }
     }
-
-    //header('Location: index.php');//End of File
   }
 }
 $ar = array();
