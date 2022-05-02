@@ -130,7 +130,7 @@ if (isset($_POST['send']))//Отправить
 
   $formpoints = array('gender' => $_POST['gender'], 'hand' => $_POST['hand'], 'syperpover' => $_POST['syperpover'],);
   foreach ($formpoints as  $key => $v) {
-    setcookie($key, (string)$v, time() + 30 * 24 * 60 * 60);
+    setcookie($key, $v, time() + 30 * 24 * 60 * 60);
   }
 
   $formdata = array('name' => $_POST['name'], 'email' => $_POST['email'], 'date' => $_POST['date'], 'biography' => $_POST['biography'], 'check' => $_POST['check'],);
