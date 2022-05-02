@@ -3,26 +3,17 @@ header('Content-Type: text/html; charset=UTF-8');
 $user = 'u47586';
 $pass = '3927785';
 $parametrs = array('name', 'email', 'date', 'gender', 'hand', 'biography', 'syperpover', 'check');
-$strinformassage = array(
-  'change' => '<div style="color:green"> Вы можете изменить данные отправленные ранее.</div>',
-  'update' => '<div style="color:green"> Данные обновлены.</div>',
-  'exit' => '<div style="color:green"> Выход выполнен.</div>',
-  'noexit' => '<div style="color:green">Вы не авторизованы.</div>',
-);
-$messages = array();
-foreach ($strinformassage as $name => $str) {
-  if (isset($_COOKIE[$name]))
-    $messages[$name] = $str;
-  else $messages[$name] = '';
-  setcookie($name, '', time() - 100000);
-}
 
-//____________________________________________________________GET__________________________________________________
-//_______________________________________________3)__________Ссылка на login_____________
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-  if (isset($_COOKIE['save'])) {
-    if (!empty($_COOKIE['login'])) {
-      setcookie('registration', '', time() - 100000);
+
+//____________________________________________________________GET__________________
+//_____________________________________________________Ссылка на login_____________
+if ($_SERVER['REQUEST_METHOD'] == 'GET') 
+{
+  if (isset($_COOKIE['save'])) 
+  {
+    if (!empty($_COOKIE['login']))
+    {
+      // setcookie('registration', '', time() - 100000);
       $messages['enter'] = '<div style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
       и паролем <strong>' . $_COOKIE['pass'] . '</strong> для изменения данных.' . '</div>';
     }
@@ -30,12 +21,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     setcookie('login', '', time() - 100000);
     setcookie('pass', '', time() - 100000);
     $messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
-  } //______________________________________________________________________________________
+  }
+  if(isset($_SESSION['login'])) $messages['user']= '<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0 end-0"> Пользователь: '.$_SESSION['login'].'</div>';
+  else  $messages['user']= '';
 
   $errors = array();
   $values = array();
 
-
+  $strinformassage = array(
+    'change' => '<div style="color:green"> Вы можете изменить данные отправленные ранее.</div>',
+    'update' => '<div style="color:green"> Данные обновлены.</div>',
+    'exit' => '<div style="color:green"> Выход выполнен.</div>',
+    'noexit' => '<div style="color:green">Вы не авторизованы.</div>',
+  );
+  $messages = array();
+  foreach ($strinformassage as $name => $str) {
+    if (isset($_COOKIE[$name]))
+      $messages[$name] = $str;
+    else $messages[$name] = '';
+    setcookie($name, '', time() - 100000);
+  }
 
   foreach ($parametrs as $name) {
     $errorname = $name . '_error';
@@ -55,13 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
   }
 
-  //________________________________6)_______________________________Авторизованный пользователь____________________________
+  //_________________________________________________Авторизованный пользователь____________________________
 
   // Если нет предыдущих ошибок ввода, есть кука сессии, начали сессию и
   // ранее в сессию записан факт успешного логина.
   if (empty($errors) && !empty($_COOKIE[session_name()]) && session_start() && !empty($_SESSION['login'])) {
     // загрузить данные пользователя из БД
-    printf('Вход с логином %s, uid %d', $_SESSION['login'], $_SESSION['uid']);
+    printf('Вход с логином '.$_SESSION['login'].', uid '. $_SESSION['uid']);
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
     try {
       $sth1 = $db->prepare("SELECT `*` FROM `users` WHERE `login` = ?");
@@ -75,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       foreach ($parametrs as $name) {
         if (isset($data[$name])) //strip_tags?
         {
-          $values[$name] = $data[$name];
+          $values[$name] = filter_var($data[$name], FILTER_SANITIZE_SPECIAL_CHARS);
         } else $values[$name] = '';
       }
     } catch (PDOException $e) {
@@ -105,11 +110,11 @@ if ($_POST['exit'])//Выход
     session_destroy();
   } else setcookie('noexit', 1);
 } else 
-if ($_POST['login']) 
-{               
-  header('Location: login.php');//Вход
-  exit();
-} else 
+// if ($_POST['login']) 
+// {               
+//   header('Location: login.php');//Вход
+//   exit();
+// } else 
 if ($_POST['send'])//Отправить
 {                                    
   $name = $_POST['name'];
@@ -153,19 +158,14 @@ if ($_POST['send'])//Отправить
     exit();
   } else 
   {
-    setcookie('name_error', '', time() - 3600);
-    setcookie('email_error', '', time() - 3600);
-    setcookie('date_error', '', time() - 3600);
-    setcookie('gender_error', '', time() - 3600);
-    setcookie('hand_error', '', time() - 3600);
-    setcookie('biography_error', '', time() - 3600);
-    setcookie('syperpover_error', '', time() - 3600);
-    setcookie('No', '', time() - 3600);
+    $delcookie=array('name_error','email_error',  'date_error','gender_error',  'hand_error',  'biography_error',  'syperpover_error',);
+    foreach($delcookie as $v) setcookie($v, '', time() - 3600);
+    //setcookie('No', '', time() - 3600);
 
     //________________________________________________Авторизованный пользователь Меняет данные______________________________________  
 
     // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
-    if (!empty($_COOKIE[session_name()]) && session_start() && !empty($_SESSION['login'])) {
+    if (session_status() === PHP_SESSION_ACTIVE && !empty($_SESSION['login'])) {
       $update;
       $form = array('name' => $_POST['name'], 'email' => $_POST['email'], 'date' => $_POST['date'], 'biography' => $_POST['biography'], 'gender' => $_POST['gender'], 'hand' => $_POST['hand'], 'syperpover' => $_POST['syperpover'],);
 
@@ -200,7 +200,7 @@ if ($_POST['send'])//Отправить
         exit();
       }
       setcookie('update', 1, time() + 30 * 24);
-      //header('Location: login.php');exit();//Update
+      header('Location: login.php');exit();//Update
     } else //__________________Неавторизованный пользователь выдаём login_______________________________
     {
       // Генерируем уникальный логин и пароль.
@@ -227,11 +227,15 @@ if ($_POST['send'])//Отправить
         print('Error:' . $e->GetMessage());
         exit();
       }
-      setcookie('save', 1, time() + 30 * 24 * 60 * 60);
-      // header('Location: login.php');//выдаём login
-    } //________________________________________________________________________________________________________________________
-
+      setcookie('save', 1);
+      // header('Location: login.php');//или ссылка
+    } 
   }
-  //setcookie('save', '1');
+
   //header('Location: index.php');//End of File
 }
+
+$ar=array();
+foreach($_COOKIE as $key => $value) $ar[$key]=$value;
+foreach($ar as $key => $v) echo $key_index.':'.' '.$v.'<br/>';
+?> 
