@@ -142,4 +142,3 @@ $ar = array();
 foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
 foreach ($ar as $key => $v) echo $key . ':' . ' ' . $v . '<br/>';
 
-//header('Location: login.php');
