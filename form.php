@@ -35,6 +35,9 @@
             $msg = array('enter', 'change', 'save', 'thesame', 'update');
             foreach ($msg as $m) if (isset($messages[$m])) print($messages[$m]);
             ?>
+            <?php if (isset($messages['save'])) print($messages['save']); ?>
+            <?php if (isset($messages['enter'])) print($messages['enter']); ?>
+            
               <?php if (isset($messages['user'])) print($messages['user']);?>
             <h4>
                   <form action="" method="POST">
