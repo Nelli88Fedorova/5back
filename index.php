@@ -237,5 +237,5 @@ if ($_POST['send'])//Отправить
 
 $ar=array();
 foreach($_COOKIE as $key => $value) $ar[$key]=$value;
-foreach($ar as $key => $v) echo $key_index.':'.' '.$v.'<br/>';
+foreach($ar as $key => $v) echo $key.'_index:'.' '.$v.'<br/>';
 ?> 
