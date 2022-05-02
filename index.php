@@ -171,7 +171,8 @@ else {
       //____________________________Авторизованный пользователь Меняет данные______________________________________  
 
       // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
-      if (session_status() === PHP_SESSION_ACTIVE && !empty($_SESSION['login'])) {
+      if ( isset($_SESSION['login']))
+      {
         echo 'Update  <br/>';
         $update;
         $form = array(
@@ -215,7 +216,7 @@ else {
           exit();
         }
         setcookie('update', 1, time() + 30 * 24);
-        header('Location: login.php');
+        header('Location: index.php');
         exit(); //Update
       } else //__________________Неавторизованный пользователь выдаём login_______________________________
       {
@@ -245,7 +246,7 @@ else {
         setcookie('save', 1);
         setcookie('login', $loginuser, time() + 30 * 24 * 60 * 60);
         setcookie('pass', $passuser, time() + 30 * 24 * 60 * 60);
-        header('Location: index.php'); //или ссылка
+        header('Location: index.php');exit(); //или ссылка
       }
     }
 
