@@ -106,7 +106,7 @@ else {
   {
     if(!empty($loginu) && !empty($passu)){
       //  Проверть есть ли такой логин и пароль в базе данных.
-      
+      echo 'Не пустые поля <br/>';
       //вход в БД
       $user = 'u47586';
       $pass = '3927785';
@@ -117,11 +117,18 @@ else {
       $value = $sth->fetch(PDO::FETCH_ASSOC);
       if (empty($value)) // нет такого пользователя
       {
-        //echo $value['id']; Выдать сообщение об ошибках.
+        echo '$value[id] '. $value['id'].'Пуст<br/>';// Выдать сообщение об ошибках.
         $msg['notexist'] = '<div style="color:red"> Пользователь с логином ' . $loginu . ' не существует!</div>';
+        header('Location: login.php');
+        exit();
       } else if ($value['pass'] != md5($passu)) {
+        echo 'Неверный пароль <br/>';
         $msg['wrong'] = '<div style="color:red"> Неверный пароль!</div>';
-      } else { //Если все ок, то авторизуем пользователя.
+        header('Location: login.php');
+        exit();
+
+      } else {
+        echo 'Всё ОК <br/>';//Если все ок, то авторизуем пользователя.
         session_start();
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
@@ -129,6 +136,7 @@ else {
         header('Location: http://u47586.kubsu-dev.ru/5back/index.php');
         exit();
       }
+
     }else if (session_status() !== PHP_SESSION_ACTIVE) {
         setcookie('enterlog', 1);
         header('Location: login.php'); //Ошибка входа
