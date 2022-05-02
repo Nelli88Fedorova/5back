@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     <div class="for">
       <form action="" method="post">
         <label> login:<br />
-          <!-- _____________________________________________4)________Заполняем пароль и логин из COOKIE___________________________ -->
+          <!-- __________________________________Заполняем пароль и логин из COOKIE___________________________ -->
           <input name="login" value="<?php if (isset($_COOKIE['login'])) print $_COOKIE['login']; ?>" />
         </label><br />
 
@@ -65,14 +65,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
           <input name="pass" value="<?php if (isset($_COOKIE['pass'])) print $_COOKIE['pass']; ?>" />
         </label><br />
 
-        <input name="enterlog" type="submit" value="Войти" />
+        <input name="buttlog" type="submit" value="Вход" />
         <!-- <input name="registration" type="submit" value="регистрация" /> -->
-        <input name="exitlog" type="submit" value="Выход" />
+        <input name="buttlog" type="submit" value="Выход" />
       </form>
 
       <?php
       $msgs = array('exitlog1', 'exitlog2', 'registration', 'exitlog',);
-      foreach ($msgs as $m) if (isset($messages[$m])) print($msg[$m]);
+      foreach ($msgs as $m) if (isset($msg[$m])) print($msg[$m]);
       ?>
     </div>
   </body>
@@ -82,26 +82,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 
 //________________________________POST_______________________________
-else
-  //   if (isset($_POST['registration'])) 
-  // {
-  //   if (session_status() !== PHP_SESSION_ACTIVE) {
-  //     header('Location: index.php');//Регистрация
-  //     exit();
-  //   } else
-  //   { setcookie('registration', '1');
-  //     header('Location: login.php');//NoРегистрация
-  //     exit();
-  //   }
-  // } else
-  if ($_POST['exitlog']) //Выход
+else {
+  $enterlog = 0;
+  $exitlog = 0;
+  if (isset($_POST['buttlog']))
+    switch ($_POST['buttlog']) {
+      case 'Отправить':
+        $enterlog = 1;
+        break;
+      case 'Выход':
+        $exitlog = 1;
+        break;
+    }
+  if ($exitlog == 1) //Выход
   {
-    if (!empty($_SESSION['login'])) {
+    if (isset($_SESSION['login'])) {
       session_destroy();
       setcookie('exitlog1', 1);
     } else setcookie('exitlog2', 1);
   } else
-    if (isset($_POST['enterlog'])) //Вход
+    if ($enterlog == 1) //Вход
   {
     if (empty($_POST['login']) || empty($_POST['pass'])) {
       setcookie('enterlogerror', 1);
@@ -133,12 +133,15 @@ else
         session_start();
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
-        header('Location: index.php');
-        exit();
+        include('index.php');
+        // header('Location: index.php');
+        // exit();
       }
     }
   }
+}
 $ar = array();
 foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
 foreach ($ar as $key => $v) echo $key . ':' . ' ' . $v . '<br/>';
 
+//header('Location: login.php');
