@@ -243,9 +243,8 @@ else {
         setcookie('save', 1);
         setcookie('login', $loginuser, time() + 30 * 24 * 60 * 60);
         setcookie('pass', $passuser, time() + 30 * 24 * 60 * 60);
-        include('login.php');
-        // header('Location: index.php');
-        // exit(); //или ссылка
+        header('Location: index.php');
+        exit(); //или ссылка
       }
     }
   }
