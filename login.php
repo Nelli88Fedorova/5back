@@ -1,7 +1,5 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
-$sitelogin='http://u47586.kubsu-dev.ru/5back/login.php';
-$siteindex='http://u47586.kubsu-dev.ru/5back/index.php';
 
 $string = array(
   'exitlog1' => '<div style="color:green"> Выход выполнен.</div>',
@@ -134,7 +132,7 @@ else {
         session_start();
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
-        header('Location: '.$siteindex);
+        header('Location: form.php');
         exit();
       }
     }
@@ -144,4 +142,3 @@ $ar = array();
 foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
 foreach ($ar as $key => $v) echo $key . ':' . ' ' . $v . '<br/>';
 
-//header('Location: login.php');
