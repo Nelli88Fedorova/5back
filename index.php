@@ -128,12 +128,14 @@ if (isset($_POST['send']))//Отправить
   $check = $_POST['check'];
   $syperpover = implode(',', $_POST['syperpover']);
 
-  $formpoints = array('gender' => $_POST['gender'], 'hand' => $_POST['hand'], 'syperpover' => $_POST['syperpover'],);
-  foreach ($formpoints as  $key => $v) {
+  $formpoints = array('gender' => $gender, 'hand' => $hand, 'syperpover' => $syperpover,);
+  foreach ($formpoints as  $key => $v) 
+  {
     setcookie($key, $v, time() + 30 * 24 * 60 * 60);
   }
 
-  $formdata = array('name' => $_POST['name'], 'email' => $_POST['email'], 'date' => $_POST['date'], 'biography' => $_POST['biography'], 'check' => $_POST['check'],);
+  $formdata = array('name' => $name, 'email' => $email, 'date' => $date, 'biography' => $biography,
+   'check' => $check,);
   //______________________________________________ Проверяем ошибки._____________________________________________
   $errors = FALSE;
   foreach ($formdata as  $key => $v) {
@@ -169,7 +171,14 @@ if (isset($_POST['send']))//Отправить
     // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
     if (session_status() === PHP_SESSION_ACTIVE && !empty($_SESSION['login'])) {
       $update;
-      $form = array('name' => $_POST['name'], 'email' => $_POST['email'], 'date' => $_POST['date'], 'biography' => $_POST['biography'], 'gender' => $_POST['gender'], 'hand' => $_POST['hand'], 'syperpover' => $_POST['syperpover'],);
+      $form = array(
+        'name' => $name,
+       'email' => $email,
+       'date' => $date,
+       'biography' => $biography,
+       'gender' => $gender,
+       'hand' => $hand,
+      'syperpover' => $syperpover,);
 
       $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
       try {
