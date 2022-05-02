@@ -85,17 +85,12 @@
                         <label><input type="checkbox" value="Yes" name="check" />
                               Согласен(а) на обработку данных. </label><br />
 
-                        <input name="send" type="submit" value="Отправить" />
-                        <!-- <input name="login" type="submit" value="Вход" /> -->
-                        <input name="exit" type="submit" value="Выход" />
+                        <input name="butt" type="submit" value="Отправить" />
+                        <!-- <input name="butt" type="submit" value="Вход" /> -->
+                        <input name="butt" type="submit" value="Выход" />
                   </form>
             </h4>
       </div>
 </body>
 
-</html>
-<?php 
-$ar=array();
-foreach($_COOKIE as $key => $value) $ar[$key]=$value;
-foreach($ar as $key => $v) echo $key.'_form:'.' '.$v.'<br/>';
-?> 
+</html> 
