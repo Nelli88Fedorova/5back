@@ -4,7 +4,7 @@
 <head>
       <meta charset="UTF-8">
       <link rel="stylesheet" href="stiles.css">
-      <title>5Back</title>
+      <title>5Back_index</title>
       <style>
             .for {
                   border: 2px solid rgb(26, 18, 144);
@@ -35,6 +35,7 @@
             $msg = array('enter', 'change', 'save', 'thesame', 'update');
             foreach ($msg as $m) if (isset($messages[$m])) print($messages[$m]);
             ?>
+              <?php if (isset($messages['user'])) print($messages['user']);?>
             <h4>
                   <form action="" method="POST">
                         <label> Имя:<br />
@@ -81,11 +82,11 @@
                         </label><br />
                         <br />
                         <?php if (isset($errors['check'])) print('<div style="color:red"> Необходимо согласия на обработку данных!</div>'); ?>
-                        <label><input type="checkbox" value="Y" name="check" />
+                        <label><input type="checkbox" value="Yes" name="check" />
                               Согласен(а) на обработку данных. </label><br />
 
                         <input name="send" type="submit" value="Отправить" />
-                        <input name="login" type="submit" value="Войти" />
+                        <!-- <input name="login" type="submit" value="Вход" /> -->
                         <input name="exit" type="submit" value="Выход" />
                   </form>
             </h4>
@@ -93,3 +94,8 @@
 </body>
 
 </html>
+<?php 
+$ar=array();
+foreach($_COOKIE as $key => $value) $ar[$key]=$value;
+foreach($ar as $key => $v) echo $key_form.':'.' '.$v.'<br/>';
+?> 
