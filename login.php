@@ -58,11 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       <form action="" method="post">
         <label> login:<br />
           <!-- __________________________________Заполняем пароль и логин из COOKIE___________________________ -->
-          <input name="login" value="<?php if (isset($_COOKIE['login'])) print $_COOKIE['login']; ?>" />
+          <input name="login" value="<?php if (isset($_COOKIE['login'])) print( $_COOKIE['login']); else print('');?>" />
         </label><br />
 
         <label> password:<br />
-          <input name="pass" value="<?php if (isset($_COOKIE['pass'])) print $_COOKIE['pass']; ?>" />
+          <input name="pass" value="<?php if (isset($_COOKIE['pass'])) print ($_COOKIE['pass']); else print('');?>" />
         </label><br />
 
         <input name="buttlog" type="submit" value="Вход" />
@@ -133,9 +133,8 @@ else {
         session_start();
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
-        include('index.php');
-        // header('Location: index.php');
-        // exit();
+        header('Location: index.php');
+        exit();
       }
     }
   }
