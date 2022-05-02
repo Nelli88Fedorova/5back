@@ -1,8 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
-
-// foreach($_COOKIE as $key => $value) unset($_COOKIE[$key]);
-//  //setcookie($key, '', time() - 3600, '/');
+$sitelogin='http://u47586.kubsu-dev.ru/5back/login.php';
+$siteindex='http://u47586.kubsu-dev.ru/5back/index.php';
 
 $string = array(
   'exitlog1' => '<div style="color:green"> Выход выполнен.</div>',
@@ -83,6 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 //________________________________POST_______________________________
 else {
+  setcookie('login', '', time() - 100000);
+  setcookie('pass', '', time() - 100000);
   $enterlog = 0;
   $exitlog = 0;
   if (isset($_POST['buttlog']))
@@ -133,7 +134,7 @@ else {
         session_start();
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
-        header('Location: index.php');
+        header('Location: '.$siteindex);
         exit();
       }
     }
