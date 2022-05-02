@@ -97,5 +97,5 @@
 <?php 
 $ar=array();
 foreach($_COOKIE as $key => $value) $ar[$key]=$value;
-foreach($ar as $key => $v) echo $key_form.':'.' '.$v.'<br/>';
+foreach($ar as $key => $v) echo $key.'_form:'.' '.$v.'<br/>';
 ?> 
