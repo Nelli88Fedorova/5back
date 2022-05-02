@@ -132,7 +132,8 @@ else {
         session_start();
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
-        header('Location: form.php');
+        include('form.php');
+        //header('Location: form.php');
         exit();
       }
     }
