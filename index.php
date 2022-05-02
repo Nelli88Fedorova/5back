@@ -97,15 +97,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   include('form.php');
 } //____________________________________________POST__________________________________________________________________
-
 else
-{$action = $_POST['butt'];
+{
+  
   $sendind=0; $exitind=0;
+  if( isset($_POST['butt']))
   switch ($action)
-   {
+  {
     case 'Отправить': $sendind=1; break;
     case 'Выход' : $exitind=1; break;
-   }
+  }
   if ($exitind==1) {
     if (session_status() === PHP_SESSION_ACTIVE) {
       setcookie('exit', 1);
