@@ -1,5 +1,8 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
+$ar = array();
+foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
+foreach ($ar as $key => $v) echo $key . ':' . ' ' . $v . '<br/>';
 
 $string = array(
   'exitlog1' => '<div style="color:green"> Выход выполнен.</div>',
@@ -54,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     <div class="for">
       <form action="" method="POST">
         <label> login:<br />
-          <!-- __________________________________Заполняем пароль и логин из COOKIE___________________________ -->
           <input name="login" value="<?php if (isset($_COOKIE['login'])) print($_COOKIE['login']);
                                       else print(''); ?>" />
         </label><br />
@@ -70,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       </form>
 
       <?php
-      $msgs = array('exitlog1', 'exitlog2', 'registration', 'exitlog',);
+      $msgs = array('exitlog1', 'exitlog2', 'enterlog', 'enterlogerror', 'registration', 'exitlog', 'wrong', 'notexist');
       foreach ($msgs as $m) if (isset($msg[$m])) print($msg[$m]);
       ?>
     </div>
@@ -78,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   </html>
 <?php
-}//________________________________POST_______________________________
+} //________________________________POST_______________________________
 else {
   setcookie('login', '', time() - 100000);
   setcookie('pass', '', time() - 100000);
@@ -100,12 +102,19 @@ else {
     if (isset($_SESSION['login'])) {
       session_destroy();
       setcookie('exitlog1', 1);
-    } else setcookie('exitlog2', 1);
+      header('Location: login.php');
+      exit();
+    } else {
+      setcookie('exitlog2', 1);
+      header('Location: login.php');
+      exit();
+    }
   }
   if ($enterlog == 1) //Вход
   {
     echo 'Кнопка Вход <br/>';
-    if (!empty($loginu) && !empty($passu)) {
+    if (!empty($loginu) && !empty($passu))
+    {
       //  Проверть есть ли такой логин и пароль в базе данных.
       echo 'Не пустые поля <br/>';
       //вход в БД
@@ -113,9 +122,16 @@ else {
       $pass = '3927785';
       $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
       //поиск соответствующего логина
-      $sth = $db->prepare("SELECT '*' FROM `users` WHERE `login` = ?");
-      $sth->execute(array($loginu));
-      $value = $sth->fetch(PDO::FETCH_ASSOC);
+      try 
+      {
+        $sth = $db->prepare("SELECT '*' FROM `users` WHERE `login` = ?");
+        $sth->execute(array($loginu));
+        $value = $sth->fetch(PDO::FETCH_ASSOC);
+      } catch (PDOException $e) 
+      {
+        print('Error:' . $e->GetMessage());
+        exit();
+      }
       if (empty($value)) // нет такого пользователя
       {
         echo '$value[id] ' . $value['id'] . 'Пуст<br/>'; // Выдать сообщение об ошибках.
@@ -133,16 +149,14 @@ else {
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
         // include('form.php');
-        header('Location: index.php');//открыть форму
+        header('Location: index.php'); //открыть форму
         exit();
       }
-    } else if (session_status() !== PHP_SESSION_ACTIVE) {
+    } else if (session_status() !== PHP_SESSION_ACTIVE)
+    {
       setcookie('enterlog', 1);
       header('Location: login.php'); //Ошибка входа
       exit();
     }
   }
 }
-// $ar = array();
-// foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
-// foreach ($ar as $key => $v) echo $key . ':' . ' ' . $v . '<br/>';
