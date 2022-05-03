@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       $messages['enter'] = '<div style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
       и паролем <strong>' . $_COOKIE['pass'] . '</strong> для изменения данных.' . '</div>';
       setcookie('save', '', time() - 100000);
-      $messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
+      //$messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
     }
   }
   if (isset($_SESSION['login'])) $messages['user'] = '<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0 end-0"> Пользователь: ' . $_SESSION['login'] . '</div>';
