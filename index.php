@@ -14,7 +14,7 @@ $messages = array();
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (isset($_COOKIE['save'])) {
     if (isset($_COOKIE['login'])) {
-      $messages['enter'] = '<div style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
+      $messages['enter'] = '<div class="position-absolute top-0" style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
       и паролем <strong>' . $_COOKIE['pass'] . '</strong> для изменения данных.' . '</div>';
       setcookie('save', '', time() - 100000);
       //$messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
@@ -27,10 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   $values = array();
 
   $strinformassage = array(
-    'change' => '<div style="color:green"> Вы можете изменить данные отправленные ранее.</div>',
-    'update' => '<div style="color:green"> Данные обновлены.</div>',
-    'exit' => '<div style="color:green"> Выход выполнен.</div>',
-    'noexit' => '<div style="color:green">Вы не авторизованы.</div>',
+    'change' => '<div style="color:green" class="position-absolute top-0"> Вы можете изменить данные отправленные ранее.</div>',
+    'update' => '<div style="color:green" class="position-absolute top-0"> Данные обновлены.</div>',
+    'exit' => '<div style="color:green" class="position-absolute top-0"> Выход выполнен.</div>',
+    'noexit' => '<div style="color:green" class="position-absolute top-0">Вы не авторизованы.</div>',
   );
   foreach ($strinformassage as $name => $str) {
     if (isset($_COOKIE[$name]))
@@ -197,7 +197,7 @@ else {
             if (isset($data[$name]) && $data[$name] != $form[$name]) $update[$name] = 1;
           }
           if (empty($update)) {
-            $messages['thesame'] = '<div style="color:gray"> Нет изменений.</div>';
+            $messages['thesame'] = '<div style="color:gray" class="position-absolute top-0"> Нет изменений.</div>';
           } //Нет изменений в данных
           else {
             //перезаписать данные в БД новыми данными,кроме логина и пароля. подготовить запрос
@@ -235,7 +235,7 @@ else {
           $super = $db->prepare("INSERT INTO Superpovers SET superpower=?");
           $super->execute(array($syperpover));
 
-          $mdpass = md5($passuser);
+          $mdpass = password_hash($passuser, PASSWORD_DEFAULT);
           $log = $db->prepare("INSERT INTO users SET login = ?, pass = ?");
           $log->execute(array($loginuser, $mdpass));
         } catch (PDOException $e) {
