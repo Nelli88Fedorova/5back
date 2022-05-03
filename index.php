@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       //$messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
     }
   }
-  if (isset($_SESSION['login'])) $messages['user'] = '<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0 start-50 end-0"> Пользователь: ' . $_SESSION['login'] . '</div>';
+  if (isset($_COOKIE['all_OK'])) $messages['user'] = '<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0  end-0"> Пользователь: ' . $_SESSION['login'] . '</div>';
   else  $messages['user'] = '';
 
   $errors = array();
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   // Если нет предыдущих ошибок ввода, есть кука сессии, начали сессию и
   // ранее в сессию записан факт успешного логина.
-  if (empty($errors) && isset($_SESSION['login'])) 
+  if (empty($errors) && isset($_COOKIE['all_OK'])) 
   {
     // загрузить данные пользователя из БД
     setcookie('avtoriz_uzer',1);
