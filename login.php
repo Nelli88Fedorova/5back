@@ -66,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                                     else print(''); ?>" />
         </label><br />
 
-        <input name="buttlog" type="submit" value="Вход" />
+        <input name="buttlog" type="submit" value="Enter" />
         <!-- <input name="registration" type="submit" value="регистрация" /> -->
-        <input name="buttlog" type="submit" value="Выход" />
+        <input name="buttlog" type="submit" value="Exit" />
       </form>
 
       <?php
@@ -90,10 +90,10 @@ else {
   $exitlog = 0;
   if (isset($_POST['buttlog']))
     switch ($_POST['buttlog']) {
-      case 'Вход':
+      case 'Enter':
         $enterlog = 1;
         break;
-      case 'Выход':
+      case 'Exit':
         $exitlog = 1;
         break;
     }
@@ -109,14 +109,15 @@ else {
       header('Location: login.php');
       exit();
     }
-  }
+  } else
   if ($enterlog == 1) //Вход
   {
-    echo 'Кнопка Вход <br/>';
+    echo 'Кнопка Вход <br/>'; setcookie('butt_enter',1);
     if (!empty($loginu) && !empty($passu))
     {
+      setcookie('not_empty',1);
       //  Проверть есть ли такой логин и пароль в базе данных.
-      echo 'Не пустые поля <br/>';
+      echo 'Не пустые поля <br/>'; setcookie('butt_enter',1);
       //вход в БД
       $user = 'u47586';
       $pass = '3927785';
@@ -133,17 +134,18 @@ else {
         exit();
       }
       if (empty($value)) // нет такого пользователя
-      {
+      { setcookie('empty_request',$value['id']);
         echo '$value[id] ' . $value['id'] . 'Пуст<br/>'; // Выдать сообщение об ошибках.
         $msg['notexist'] = '<div style="color:red"> Пользователь с логином ' . $loginu . ' не существует!</div>';
         header('Location: login.php');
         exit();
       } else if ($value['pass'] != md5($passu)) {
-        echo 'Неверный пароль <br/>';
+        echo 'Неверный пароль <br/>'; setcookie('pass_error',$passu);
         $msg['wrong'] = '<div style="color:red"> Неверный пароль!</div>';
         header('Location: login.php');
         exit();
       } else {
+        setcookie('all_OK',$passu);
         echo 'Всё ОК <br/>'; //Если все ок, то авторизуем пользователя.
         session_start();
         $_SESSION['login'] = $loginu;
@@ -152,7 +154,7 @@ else {
         header('Location: index.php'); //открыть форму
         exit();
       }
-    } else if (session_status() !== PHP_SESSION_ACTIVE)
+    } else
     {
       setcookie('enterlog', 1);
       header('Location: login.php'); //Ошибка входа
