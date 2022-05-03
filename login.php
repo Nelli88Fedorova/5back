@@ -139,7 +139,7 @@ else {
         $msg['notexist'] = '<div style="color:red"> Пользователь с логином ' . $loginu . ' не существует!</div>';
         header('Location: login.php');
         exit();
-      } else if ($value['pass'] != md5($passu)) {
+      } else if (password_verify($passu, $value['pass'])) {
         echo 'Неверный пароль <br/>'; setcookie('pass_error',$passu);
         $msg['wrong'] = '<div style="color:red"> Неверный пароль!</div>';
         header('Location: login.php');
