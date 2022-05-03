@@ -15,6 +15,11 @@
                   margin-top: 50px;
             }
 
+            .center {
+                  font-size: x-large;
+                  text-align: center;
+            }
+
             input {
                   margin-top: 10px;
                   margin-bottom: 10px;
@@ -29,13 +34,15 @@
 </head>
 
 <body>
+      <div class="center">
             <?php
-            $msg = array('enter', 'change', 'save', 'thesame', 'update','noexit','exit');
+            $msg = array('enter', 'change', 'save', 'thesame', 'update', 'noexit', 'exit');
             foreach ($msg as $m) if (isset($messages[$m])) print($messages[$m]);
             ?>
+      </div>
       <div class="for">
 
-              <?php if (isset($messages['user'])) print($messages['user']);?>
+            <?php if (isset($messages['user'])) print($messages['user']); ?>
             <h4>
                   <form action="" method="POST">
                         <label> Имя:<br />
@@ -93,4 +100,4 @@
       </div>
 </body>
 
-</html> 
+</html>
