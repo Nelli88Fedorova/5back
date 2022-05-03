@@ -1,4 +1,8 @@
 <?php
+$ar = array();
+foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
+foreach ($ar as $key => $v) echo $key . '_index:' . ' ' . $v . '<br/>';
+
 header('Content-Type: text/html; charset=UTF-8');
 $user = 'u47586';
 $pass = '3927785';
@@ -12,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_COOKIE['login'])) {
       $messages['enter'] = '<div style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
       и паролем <strong>' . $_COOKIE['pass'] . '</strong> для изменения данных.' . '</div>';
+      setcookie('save', '', time() - 100000);
+      $messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
     }
-    setcookie('save', '', time() - 100000);
-    $messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
   }
   if (isset($_SESSION['login'])) $messages['user'] = '<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0 end-0"> Пользователь: ' . $_SESSION['login'] . '</div>';
   else  $messages['user'] = '';
@@ -247,6 +251,3 @@ else {
     }
   }
 }
-$ar = array();
-foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
-foreach ($ar as $key => $v) echo $key . '_index:' . ' ' . $v . '<br/>';
