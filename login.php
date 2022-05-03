@@ -52,14 +52,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   <body>
     <div class="for">
-      <form action="" method="post">
+      <form action="" method="POST">
         <label> login:<br />
           <!-- __________________________________Заполняем пароль и логин из COOKIE___________________________ -->
-          <input name="login" value="<?php if (isset($_COOKIE['login'])) print( $_COOKIE['login']); else print('');?>" />
+          <input name="login" value="<?php if (isset($_COOKIE['login'])) print($_COOKIE['login']);
+                                      else print(''); ?>" />
         </label><br />
 
         <label> password:<br />
-          <input name="pass" value="<?php if (isset($_COOKIE['pass'])) print ($_COOKIE['pass']); else print('');?>" />
+          <input name="pass" value="<?php if (isset($_COOKIE['pass'])) print($_COOKIE['pass']);
+                                    else print(''); ?>" />
         </label><br />
 
         <input name="buttlog" type="submit" value="Вход" />
@@ -76,9 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   </html>
 <?php
-}
-
-//________________________________POST_______________________________
+}//________________________________POST_______________________________
 else {
   setcookie('login', '', time() - 100000);
   setcookie('pass', '', time() - 100000);
@@ -88,7 +88,7 @@ else {
   $exitlog = 0;
   if (isset($_POST['buttlog']))
     switch ($_POST['buttlog']) {
-      case 'Отправить':
+      case 'Вход':
         $enterlog = 1;
         break;
       case 'Выход':
@@ -101,10 +101,11 @@ else {
       session_destroy();
       setcookie('exitlog1', 1);
     } else setcookie('exitlog2', 1);
-  } else
-    if ($enterlog == 1) //Вход
+  }
+  if ($enterlog == 1) //Вход
   {
-    if(!empty($loginu) && !empty($passu)){
+    echo 'Кнопка Вход <br/>';
+    if (!empty($loginu) && !empty($passu)) {
       //  Проверть есть ли такой логин и пароль в базе данных.
       echo 'Не пустые поля <br/>';
       //вход в БД
@@ -117,7 +118,7 @@ else {
       $value = $sth->fetch(PDO::FETCH_ASSOC);
       if (empty($value)) // нет такого пользователя
       {
-        echo '$value[id] '. $value['id'].'Пуст<br/>';// Выдать сообщение об ошибках.
+        echo '$value[id] ' . $value['id'] . 'Пуст<br/>'; // Выдать сообщение об ошибках.
         $msg['notexist'] = '<div style="color:red"> Пользователь с логином ' . $loginu . ' не существует!</div>';
         header('Location: login.php');
         exit();
@@ -126,25 +127,22 @@ else {
         $msg['wrong'] = '<div style="color:red"> Неверный пароль!</div>';
         header('Location: login.php');
         exit();
-
       } else {
-        echo 'Всё ОК <br/>';//Если все ок, то авторизуем пользователя.
+        echo 'Всё ОК <br/>'; //Если все ок, то авторизуем пользователя.
         session_start();
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
-       // include('form.php');
-        header('Location: http://u47586.kubsu-dev.ru/5back/index.php');
+        // include('form.php');
+        header('Location: index.php');//открыть форму
         exit();
       }
-
-    }else if (session_status() !== PHP_SESSION_ACTIVE) {
-        setcookie('enterlog', 1);
-        header('Location: login.php'); //Ошибка входа
-        exit();
-      }
+    } else if (session_status() !== PHP_SESSION_ACTIVE) {
+      setcookie('enterlog', 1);
+      header('Location: login.php'); //Ошибка входа
+      exit();
+    }
   }
 }
-$ar = array();
-foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
-foreach ($ar as $key => $v) echo $key . ':' . ' ' . $v . '<br/>';
-
+// $ar = array();
+// foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
+// foreach ($ar as $key => $v) echo $key . ':' . ' ' . $v . '<br/>';
