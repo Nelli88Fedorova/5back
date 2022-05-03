@@ -14,23 +14,23 @@ $messages = array();
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (isset($_COOKIE['save'])) {
     if (isset($_COOKIE['login'])) {
-      $messages['enter'] = '<div class="position-absolute top-0" style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
+      $messages['enter'] = '<div class="position-absolute top-0 start-50" style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
       и паролем <strong>' . $_COOKIE['pass'] . '</strong> для изменения данных.' . '</div>';
       setcookie('save', '', time() - 100000);
       //$messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
     }
   }
-  if (isset($_SESSION['login'])) $messages['user'] = '<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0 end-0"> Пользователь: ' . $_SESSION['login'] . '</div>';
+  if (isset($_SESSION['login'])) $messages['user'] = '<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0 start-50 end-0"> Пользователь: ' . $_SESSION['login'] . '</div>';
   else  $messages['user'] = '';
 
   $errors = array();
   $values = array();
 
   $strinformassage = array(
-    'change' => '<div style="color:green" class="position-absolute top-0"> Вы можете изменить данные отправленные ранее.</div>',
-    'update' => '<div style="color:green" class="position-absolute top-0"> Данные обновлены.</div>',
-    'exit' => '<div style="color:green" class="position-absolute top-0"> Выход выполнен.</div>',
-    'noexit' => '<div style="color:green" class="position-absolute top-0">Вы не авторизованы.</div>',
+    'change' => '<div style="color:green" class="position-absolute top-0 start-50"> Вы можете изменить данные отправленные ранее.</div>',
+    'update' => '<div style="color:green" class="position-absolute top-0 start-50"> Данные обновлены.</div>',
+    'exit' => '<div style="color:green" class="position-absolute top-0 start-50"> Выход выполнен.</div>',
+    'noexit' => '<div style="color:green" class="position-absolute top-0 start-50">Вы не авторизованы.</div>',
   );
   foreach ($strinformassage as $name => $str) {
     if (isset($_COOKIE[$name]))
@@ -61,8 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   // Если нет предыдущих ошибок ввода, есть кука сессии, начали сессию и
   // ранее в сессию записан факт успешного логина.
-  if (empty($errors) && !empty($_COOKIE[session_name()]) && session_start() && !empty($_SESSION['login'])) {
+  if (empty($errors) && isset($_SESSION['login'])) 
+  {
     // загрузить данные пользователя из БД
+    setcookie('avtoriz_uzer',1);
     printf('Вход с логином ' . $_SESSION['login'] . ', uid ' . $_SESSION['uid']);
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
     try {
@@ -70,22 +72,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       $sth1->execute(array($_SESSION['login']));
       $id = $sth1->fetch(PDO::FETCH_ASSOC);
 
-      $sth2 = $db->prepare('SELECT * FROM `MainData` WHERE `id` = ?"'); // запрос данных пользователя
+      $sth2 = $db->prepare('SELECT * FROM `MainData` WHERE `id` = ?'); // запрос данных пользователя
       $sth2->execute(array($id['id']));
       $data = $sth2->fetch(PDO::FETCH_ASSOC);
       // и заполнить переменную $values, предварительно санитизовав.
-      foreach ($parametrs as $name) {
-        if (isset($data[$name])) //strip_tags?
-        {
-          $values[$name] = filter_var($data[$name], FILTER_SANITIZE_SPECIAL_CHARS);
-        } else $values[$name] = '';
-      }
+      
     } catch (PDOException $e) {
       print('Error:' . $e->GetMessage());
       exit();
     }
-  } //______________________________________________________________________________________________________________________
-  else //__________________________________Не выполнен вход, заполнение формы из COOKIE____________________________________
+    $parametrs2 = array('name'=>'name', 'email'=>'email', 'date'=>'age', 'gender'=>'gender', 
+    'hand'=>'numberOfLimb', 'biography'=>'biography',);
+    // = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=?"
+    foreach ($parametrs2 as $name=>$v) 
+    {
+      if (isset($data[$v]))
+      {
+        $values[$name] = filter_var($data[$v], FILTER_SANITIZE_SPECIAL_CHARS);
+      } else $values[$name] = '';
+    }
+  } 
+   else //__________________________________Не выполнен вход, заполнение формы из COOKIE____________________________________
   {
     foreach ($parametrs as $name) {
       if (isset($_COOKIE[$name])) //strip_tags
@@ -111,16 +118,20 @@ else {
         break;
     }
   if ($exitind == 1) {
-    if (session_status() === PHP_SESSION_ACTIVE) {
+    if (session_status() == PHP_SESSION_ACTIVE) {
       setcookie('exit', 1);
       session_destroy();
-    } else setcookie('noexit', 1);
-    header('Location: index.php'); //Выход
-    exit();
+      header('Location: index.php');
+      exit();
+    } else {
+      setcookie('noexit', 1);
+      header('Location: index.php'); //Выход
+      exit();
+    }
   } else 
     if ($sendind == 1) //Отправить
   {
-    echo 'Отправить  ' . $sendind . '<br/>';
+    setcookie('butt_send_ind', 1);
     $name = $_POST['name'];
     $email = $_POST['email'];
     $date = $_POST['date'];
@@ -172,17 +183,16 @@ else {
 
       // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
       if (isset($_SESSION['login'])) {
-        echo 'Update  <br/>';
+        setcookie('session_login', $_SESSION['login']);
         $update;
         $form = array(
           'name' => $name,
           'email' => $email,
-          'date' => $date,
-          'biography' => $biography,
+          'age' => $date,
           'gender' => $gender,
-          'hand' => $hand,
-          'syperpover' => $syperpover,
-        );
+          'numberOfLimb' => $hand,
+          'biography' => $biography,
+        ); 
 
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
         try {
@@ -190,33 +200,44 @@ else {
           $sth1->execute(array($_SESSION['login']));
           $id = $sth1->fetch(PDO::FETCH_ASSOC);
 
-          $sth2 = $dbh->prepare('SELECT * FROM `MainData` WHERE `id` = ?"'); // запрос данных пользователя
+          $sth2 = $dbh->prepare("SELECT * FROM `MainData` WHERE `id` = ?"); // запрос данных пользователя
           $sth2->execute(array($id['id']));
           $data = $sth2->fetch(PDO::FETCH_ASSOC);
-          foreach ($parametrs as $name) {
-            if (isset($data[$name]) && $data[$name] != $form[$name]) $update[$name] = 1;
-          }
-          if (empty($update)) {
-            $messages['thesame'] = '<div style="color:gray" class="position-absolute top-0"> Нет изменений.</div>';
-          } //Нет изменений в данных
-          else {
-            //перезаписать данные в БД новыми данными,кроме логина и пароля. подготовить запрос
-            $request = 'UPDATE users SET';
-            foreach ($parametrs as $name) {
-              if (isset($update[$name]))
-                $request .= ' ' . $name . ' = ' . $form[$name] . ',';
-            }
-            //удалить лишнюю запятую и добавить WHERE
-            $request = substr($request, 0, -1) . '  WHERE id = ' . $id['id'];
-            $update = $db->exec($request); //обновить данные
-          }
         } catch (PDOException $e) {
           print('Error:' . $e->GetMessage());
           exit();
         }
-        setcookie('update', 1, time() + 30 * 24);
-        header('Location: index.php');
-        exit(); //Update
+        foreach ($form as $name => $v) {
+          if (isset($data[$name]) && $data[$name] != $form[$name]) $update[$name] = 1;
+        }
+        if (empty($update)) {
+          setcookie('thesame', 1);
+          $messages['thesame'] = '<div style="color:gray" class="position-absolute top-0 start-50"> Нет изменений.</div>';
+        } //Нет изменений в данных
+        else {
+          //перезаписать данные в БД новыми данными,кроме логина и пароля. подготовить запрос
+          $request = array();
+          foreach ($form as $name => $v) {
+            if (isset($update[$name]))
+              $request[$name] = $data[$name];
+            else $request[$name] = $v;
+          }
+          try {
+            $stmt = $db->prepare("UPDATE MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=?");
+            $stmt->execute($request);
+
+            $super = $db->prepare("INSERT INTO Superpovers SET superpower=?");
+            $super->execute(array($syperpover));
+
+            //$update = $db->exec($request); //обновить данные
+          } catch (PDOException $e) {
+            print('Error:' . $e->GetMessage());
+            exit();
+          }
+          setcookie('update', 1, time() + 30 * 24);
+          header('Location: index.php');
+          exit(); //Update
+        }
       } else //__________________Неавторизованный пользователь выдаём login_______________________________
       {
         echo 'Генерация пароля  <br/>';
