@@ -29,12 +29,12 @@
 </head>
 
 <body>
-      <div class="for">
-
             <?php
             $msg = array('enter', 'change', 'save', 'thesame', 'update','noexit','exit');
             foreach ($msg as $m) if (isset($messages[$m])) print($messages[$m]);
             ?>
+      <div class="for">
+
               <?php if (isset($messages['user'])) print($messages['user']);?>
             <h4>
                   <form action="" method="POST">
