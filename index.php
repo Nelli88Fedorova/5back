@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       //$messages['save'] = '<div style="color:green"> Спасибо, результаты сохранены.</div>';
     }
   }
-  if (isset($_COOKIE['all_OK'])) $messages['user'] = '<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0  end-0"> Пользователь: ' . $_SESSION['login'] . '</div>';
+  if (isset($_COOKIE['all_OK'])) $messages['user'] = '<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0  end-0"> Пользователь: ' . $_COOKIE['all_OK'] . '</div>';
   else  $messages['user'] = '';
 
   $errors = array();
@@ -65,11 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   {
     // загрузить данные пользователя из БД
     setcookie('avtoriz_uzer',1);
-    printf('Вход с логином ' . $_SESSION['login'] . ', uid ' . $_SESSION['uid']);
+    //printf('Вход с логином ' . $_SESSION['login'] . ', uid ' . $_SESSION['uid']);
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
     try {
       $sth1 = $db->prepare("SELECT `*` FROM `users` WHERE `login` = ?");
-      $sth1->execute(array($_SESSION['login']));
+      $sth1->execute(array($_COOKIE['all_OK']));
       $id = $sth1->fetch(PDO::FETCH_ASSOC);
 
       $sth2 = $db->prepare('SELECT * FROM `MainData` WHERE `id` = ?'); // запрос данных пользователя
