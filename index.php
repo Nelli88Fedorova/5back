@@ -61,39 +61,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   // Если нет предыдущих ошибок ввода, есть кука сессии, начали сессию и
   // ранее в сессию записан факт успешного логина.
+  if(!empty($errors)) setcookie('not_empty_errors_index',1);
+  if(!isset($_COOKIE['all_OK'])) setcookie('not_isset_all_OK_index',1);
   if (empty($errors) && isset($_COOKIE['all_OK'])) 
   {
     // загрузить данные пользователя из БД
-    setcookie('avtoriz_uzer',1);
-    //printf('Вход с логином ' . $_SESSION['login'] . ', uid ' . $_SESSION['uid']);
+    setcookie('avtoriz_uzer_get_data_from_db',1);
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
     try {
-      $sth1 = $db->prepare("SELECT `*` FROM `users` WHERE `login` = ?");
+      $sth1 = $db->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
       $sth1->execute(array($_COOKIE['all_OK']));
       $id = $sth1->fetch(PDO::FETCH_ASSOC);
+      if(empty($id)) setcookie('empty_id',1);
 
       $sth2 = $db->prepare('SELECT * FROM `MainData` WHERE `id` = ?'); // запрос данных пользователя
       $sth2->execute(array($id['id']));
-      $data = $sth2->fetch(PDO::FETCH_ASSOC);
+      $data = $sth2->fetch(PDO::FETCH_ASSOC); if(empty($data)) setcookie('empty_data',1);
       // и заполнить переменную $values, предварительно санитизовав.
-      
-    } catch (PDOException $e) {
+    } catch (PDOException $e)
+    {
       print('Error:' . $e->GetMessage());
       exit();
     }
     $parametrs2 = array('name'=>'name', 'email'=>'email', 'date'=>'age', 'gender'=>'gender', 
     'hand'=>'numberOfLimb', 'biography'=>'biography',);
-    // = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=?"
     foreach ($parametrs2 as $name=>$v) 
     {
       if (isset($data[$v]))
       {
-        $values[$name] = filter_var($data[$v], FILTER_SANITIZE_SPECIAL_CHARS);
+        $values[$name] = $data[$v];//filter_var($data[$v], FILTER_SANITIZE_SPECIAL_CHARS)
       } else $values[$name] = '';
     }
   } 
    else //__________________________________Не выполнен вход, заполнение формы из COOKIE____________________________________
-  {
+  { setcookie('all_OK','', time()-1000);
     foreach ($parametrs as $name) {
       if (isset($_COOKIE[$name])) //strip_tags
       {
@@ -131,7 +132,7 @@ else {
   } else 
     if ($sendind == 1) //Отправить
   {
-    setcookie('butt_send_ind', 1);
+    setcookie('butt_send', 1);
     $name = $_POST['name'];
     $email = $_POST['email'];
     $date = $_POST['date'];
@@ -182,7 +183,7 @@ else {
       //____________________________Авторизованный пользователь Меняет данные______________________________________  
 
       // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
-      if (isset($_SESSION['login'])) {
+      if (isset($_COOKIE['all_OK'])) {
         setcookie('session_login', $_SESSION['login']);
         $update;
         $form = array(
@@ -239,7 +240,7 @@ else {
           exit(); //Update
         }
       } else //__________________Неавторизованный пользователь выдаём login_______________________________
-      {
+      {setcookie('all_OK','', time()-1000);
         echo 'Генерация пароля  <br/>';
         // Генерируем уникальный логин и пароль.
         $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
