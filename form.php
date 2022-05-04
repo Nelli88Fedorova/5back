@@ -94,7 +94,7 @@
 
                         <input name="butt" type="submit" value="Отправить" />
                         <!-- <input name="butt" type="submit" value="Вход" /> -->
-                        <!-- <input name="butt" type="submit" value="Выход" /> -->
+                        <input name="butt" type="submit" value="Выход" />
                   </form>
             </h4>
       </div>
