@@ -99,10 +99,12 @@ else {
     }
   if ($exitlog == 1) //Выход
   {
-    if (isset($_SESSION['login'])) {
+    if (isset($_COOKIE['login'])) {
       session_destroy();
       setcookie('exitlog1', 1);
       setcookie('all_OK','',time()-1000);
+      setcookie('login', '',time()-1000);
+      setcookie('pass', '',time()-1000);
       header('Location: login.php');
       exit();
     } else {
