@@ -1,7 +1,7 @@
 <?php
 $ar = array();
 foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
-foreach ($ar as $key => $v) echo $key . '_index:' . ' ' . $v . '<br/>';
+foreach ($ar as $key => $v) echo $key . ':  ' . ' ' . $v . '<br/>';
 
 header('Content-Type: text/html; charset=UTF-8');
 $user = 'u47586';
@@ -33,10 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     'noexit' => '<div style="color:green" class="position-absolute top-0 start-50">Вы не авторизованы.</div>',
   );
   foreach ($strinformassage as $name => $str) {
-    if (isset($_COOKIE[$name]))
-    {  $messages[$name] = $str;
-      setcookie($name, '', time() - 100000);}
-    else $messages[$name] = '';
+    if (isset($_COOKIE[$name])) {
+      $messages[$name] = $str;
+      setcookie($name, '', time() - 100000);
+    } else $messages[$name] = '';
   }
 
   foreach ($parametrs as $name) {
@@ -61,40 +61,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   // Если нет предыдущих ошибок ввода, есть кука сессии, начали сессию и
   // ранее в сессию записан факт успешного логина.
-  if(!empty($errors)) setcookie('not_empty_errors_index',1);
-  if(!isset($_COOKIE['all_OK'])) setcookie('not_isset_all_OK_index',1);
-  if (empty($errors) && isset($_COOKIE['all_OK'])) 
-  {
+  // if(!empty($errors)) setcookie('not_empty_errors_index',1111);
+  // if(!isset($_COOKIE['all_OK'])) setcookie('not_isset_all_OK_index',1111);
+  if (empty($errors) && isset($_COOKIE['all_OK'])) {
     // загрузить данные пользователя из БД
-    setcookie('get_avtoriz_uzer_data_from_db',1);
+    setcookie('get_avtoriz_uzer_data_from_db', 111111);
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
     try {
       $sth1 = $db->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
       $sth1->execute(array($_COOKIE['all_OK']));
       $id = $sth1->fetch(PDO::FETCH_ASSOC);
-      if(empty($id)) setcookie('empty_id',1);
+      if (empty($id)) {
+        setcookie('empty_id', 111);
+        header('Location: index.php');
+        exit();
+      }
 
       $sth2 = $db->prepare('SELECT * FROM `MainData` WHERE `id` = ?'); // запрос данных пользователя
       $sth2->execute(array($id['id']));
-      $data = $sth2->fetch(PDO::FETCH_ASSOC); if(empty($data)) setcookie('empty_data',1);
+      $data = $sth2->fetch(PDO::FETCH_ASSOC);
+      if (empty($data)) setcookie('empty_data', 1);
       // и заполнить переменную $values, предварительно санитизовав.
-    } catch (PDOException $e)
-    {
+    } catch (PDOException $e) {
       print('Error:' . $e->GetMessage());
       exit();
     }
-    $parametrs2 = array('name'=>'name', 'email'=>'email', 'date'=>'age', 'gender'=>'gender', 
-    'hand'=>'numberOfLimb', 'biography'=>'biography',);
-    foreach ($parametrs2 as $name=>$v) 
-    {
-      if (isset($data[$v]))
-      {
-        $values[$name] = $data[$v];//filter_var($data[$v], FILTER_SANITIZE_SPECIAL_CHARS)
+    $parametrs2 = array(
+      'name' => 'name', 'email' => 'email', 'date' => 'age', 'gender' => 'gender',
+      'hand' => 'numberOfLimb', 'biography' => 'biography',
+    );
+    foreach ($parametrs2 as $name => $v) {
+      if (isset($data[$v])) {
+        $values[$name] = $data[$v]; //filter_var($data[$v], FILTER_SANITIZE_SPECIAL_CHARS)
       } else $values[$name] = '';
     }
-  } 
-   else //__________________________________Не выполнен вход, заполнение формы из COOKIE____________________________________
-  { setcookie('all_OK','', time()-1000);
+  } else //__________________________________Не выполнен вход, заполнение формы из COOKIE____________________________________
+  {
+    setcookie('all_OK', '', time() - 1000);
     foreach ($parametrs as $name) {
       if (isset($_COOKIE[$name])) //strip_tags
       {
@@ -121,9 +124,9 @@ else {
   if ($exitind == 1) {
     if (isset($_COOKIE['all_OK'])) {
       setcookie('exit', 1);
-      setcookie('all_OK', '',time()-1000);
-      setcookie('login', '',time()-1000);
-      setcookie('pass', '',time()-1000);
+      setcookie('all_OK', '', time() - 1000);
+      setcookie('login', '', time() - 1000);
+      setcookie('pass', '', time() - 1000);
       session_destroy();
       header('Location: index.php');
       exit();
@@ -135,7 +138,6 @@ else {
   } else 
     if ($sendind == 1) //Отправить
   {
-    setcookie('butt_send', 1);
     $name = $_POST['name'];
     $email = $_POST['email'];
     $date = $_POST['date'];
@@ -186,8 +188,7 @@ else {
       //____________________________Авторизованный пользователь Меняет данные______________________________________  
 
       // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
-      if (isset($_COOKIE['all_OK'])) 
-      {
+      if (isset($_COOKIE['all_OK'])) {
         setcookie('post_autoriz_uzer_index', 1);
         $update;
         $form = array(
@@ -197,9 +198,12 @@ else {
           'gender' => $gender,
           'numberOfLimb' => $hand,
           'biography' => $biography,
-        ); 
-        $data;$parametrs2 = array('name'=>'name', 'email'=>'email', 'date'=>'age', 'gender'=>'gender', 
-        'hand'=>'numberOfLimb', 'biography'=>'biography',);
+        );
+        $data;
+        $parametrs2 = array(
+          'name' => 'name', 'email' => 'email', 'date' => 'age', 'gender' => 'gender',
+          'hand' => 'numberOfLimb', 'biography' => 'biography',
+        );
         $id;
 
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
@@ -214,9 +218,8 @@ else {
         } catch (PDOException $e) {
           print('Error:' . $e->GetMessage());
           exit();
-        
         }
-        
+
         foreach ($parametrs2 as $name => $v) {
           if (isset($data[$v]) && $data[$v] != $form[$v]) $update[$v] = 1;
         }
@@ -237,22 +240,22 @@ else {
           //$request[] = $id['id'];
           try {
             $stmt = $db->prepare("UPDATE MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
-            $stmt->execute($request['name'], $request['email'],$request['date'],$request['gender'],$request['hand'],$request['gender'],$request['biography'],$id['id']);
+            $stmt->execute($request['name'], $request['email'], $request['date'], $request['gender'], $request['hand'], $request['gender'], $request['biography'], $id['id']);
             $super = $db->prepare("INSERT INTO Superpovers SET superpower=?");
             $super->execute(array($syperpover));
-
           } catch (PDOException $e) {
             print('Error:' . $e->GetMessage());
             exit();
           }
           setcookie('update', 1, time() + 30 * 24);
           echo '$request<br/>';
-          foreach ($request as $key => $v) echo $key . ':  ' . $v ;
+          foreach ($request as $key => $v) echo $key . ':  ' . $v;
           header('Location: index.php');
           exit(); //Update
         }
       } else //__________________Неавторизованный пользователь выдаём login_______________________________
-      {setcookie('all_OK','', time()-1000);
+      {
+        setcookie('all_OK', '', time() - 1000);
         echo 'Генерация пароля  <br/>';
         // Генерируем уникальный логин и пароль.
         $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
