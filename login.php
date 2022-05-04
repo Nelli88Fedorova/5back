@@ -82,8 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 <?php
 } //________________________________POST_______________________________
 else {
-  setcookie('login', '', time() - 100000);
-  setcookie('pass', '', time() - 100000);
+  // setcookie('login', '', time() - 100000);
+  // setcookie('pass', '', time() - 100000);
   $loginu = $_POST['login'];
   $passu = $_POST['pass'];
   $enterlog = 0;
