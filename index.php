@@ -214,6 +214,7 @@ else {
         } catch (PDOException $e) {
           print('Error:' . $e->GetMessage());
           exit();
+        
         }
         
         foreach ($parametrs2 as $name => $v) {
@@ -230,22 +231,23 @@ else {
           $request = array();
           foreach ($parametrs2 as $name => $v) {
             if (isset($update[$v]))
-              $request[] = $data[$v];
-            else $request[] = $form[$v];
+              $request[$name] = $data[$v];
+            else $request[$name] = $form[$v];
           }
-          $request[] = $id['id'];
+          //$request[] = $id['id'];
           try {
             $stmt = $db->prepare("UPDATE MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
-            $stmt->execute($request);
-
+            $stmt->execute($request['name'], $request['email'],$request['date'],$request['gender'],$request['hand'],$request['gender'],$request['biography'],$id['id']);
             $super = $db->prepare("INSERT INTO Superpovers SET superpower=?");
             $super->execute(array($syperpover));
-            
+
           } catch (PDOException $e) {
             print('Error:' . $e->GetMessage());
             exit();
           }
           setcookie('update', 1, time() + 30 * 24);
+          echo '$request<br/>';
+          foreach ($request as $key => $v) echo $key . ':  ' . $v ;
           header('Location: index.php');
           exit(); //Update
         }
