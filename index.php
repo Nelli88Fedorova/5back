@@ -198,6 +198,9 @@ else {
           'numberOfLimb' => $hand,
           'biography' => $biography,
         ); 
+        $data;$parametrs2 = array('name'=>'name', 'email'=>'email', 'date'=>'age', 'gender'=>'gender', 
+        'hand'=>'numberOfLimb', 'biography'=>'biography',);
+        $id;
 
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
         try {
@@ -212,29 +215,32 @@ else {
           print('Error:' . $e->GetMessage());
           exit();
         }
-        foreach ($form as $name => $v) {
-          if (isset($data[$name]) && $data[$name] != $form[$name]) $update[$name] = 1;
+        
+        foreach ($parametrs2 as $name => $v) {
+          if (isset($data[$v]) && $data[$v] != $form[$v]) $update[$v] = 1;
         }
         if (empty($update)) {
           setcookie('thesame', 1);
           $messages['thesame'] = '<div style="color:gray" class="position-absolute top-0 start-50"> Нет изменений.</div>';
+          header('Location: index.php');
+          exit();
         } //Нет изменений в данных
         else {
           //перезаписать данные в БД новыми данными,кроме логина и пароля. подготовить запрос
           $request = array();
-          foreach ($form as $name => $v) {
-            if (isset($update[$name]))
-              $request[$name] = $data[$name];
-            else $request[$name] = $v;
+          foreach ($parametrs2 as $name => $v) {
+            if (isset($update[$v]))
+              $request[] = $data[$v];
+            else $request[] = $form[$v];
           }
+          $request[] = $id['id'];
           try {
-            $stmt = $db->prepare("UPDATE MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=?");
+            $stmt = $db->prepare("UPDATE MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
             $stmt->execute($request);
 
             $super = $db->prepare("INSERT INTO Superpovers SET superpower=?");
             $super->execute(array($syperpover));
-
-            //$update = $db->exec($request); //обновить данные
+            
           } catch (PDOException $e) {
             print('Error:' . $e->GetMessage());
             exit();
