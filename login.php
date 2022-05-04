@@ -102,6 +102,7 @@ else {
     if (isset($_SESSION['login'])) {
       session_destroy();
       setcookie('exitlog1', 1);
+      setcookie('all_OK','',time()-1000);
       header('Location: login.php');
       exit();
     } else {
@@ -112,10 +113,10 @@ else {
   } else
   if ($enterlog == 1) //Вход
   {
-    echo 'Кнопка Вход <br/>'; setcookie('butt_enter',1);
+    echo 'Кнопка Вход <br/>'; setcookie('butt_enter_login',1);
     if (!empty($loginu) && !empty($passu))
     {
-      setcookie('not_empty',1);
+      setcookie('not_empty_loginAndPass_login',1);
       //  Проверть есть ли такой логин и пароль в базе данных.
       echo 'Не пустые поля <br/>'; setcookie('butt_enter',1);
       //вход в БД
@@ -145,7 +146,7 @@ else {
         header('Location: login.php');
         exit();
       } else {
-        setcookie('all_OK',$passu);
+        setcookie('all_OK',$loginu);
         echo 'Всё ОК <br/>'; //Если все ок, то авторизуем пользователя.
         session_start();
         $_SESSION['login'] = $loginu;
