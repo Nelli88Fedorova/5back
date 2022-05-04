@@ -202,7 +202,7 @@ else {
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
         try {
           $sth1 = $db->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
-          $sth1->execute(array($_COOKIE['login']));
+          $sth1->execute(array($_COOKIE['all_OK']));
           $id = $sth1->fetch(PDO::FETCH_ASSOC);
 
           $sth2 = $db->prepare("SELECT * FROM `MainData` WHERE `id` = ?"); // запрос данных пользователя
