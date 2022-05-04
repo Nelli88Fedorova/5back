@@ -34,9 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   );
   foreach ($strinformassage as $name => $str) {
     if (isset($_COOKIE[$name]))
-      $messages[$name] = $str;
+    {  $messages[$name] = $str;
+      setcookie($name, '', time() - 100000);}
     else $messages[$name] = '';
-    setcookie($name, '', time() - 100000);
   }
 
   foreach ($parametrs as $name) {
@@ -202,7 +202,7 @@ else {
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
         try {
           $sth1 = $db->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
-          $sth1->execute(array($_SESSION['login']));
+          $sth1->execute(array($_COOKIE['login']));
           $id = $sth1->fetch(PDO::FETCH_ASSOC);
 
           $sth2 = $db->prepare("SELECT * FROM `MainData` WHERE `id` = ?"); // запрос данных пользователя
