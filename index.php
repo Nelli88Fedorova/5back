@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (empty($errors) && isset($_COOKIE['all_OK'])) 
   {
     // загрузить данные пользователя из БД
-    setcookie('avtoriz_uzer_get_data_from_db',1);
+    setcookie('get_avtoriz_uzer_data_from_db',1);
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
     try {
       $sth1 = $db->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
@@ -119,8 +119,11 @@ else {
         break;
     }
   if ($exitind == 1) {
-    if (session_status() == PHP_SESSION_ACTIVE) {
+    if (isset($_COOKIE['all_OK'])) {
       setcookie('exit', 1);
+      setcookie('all_OK', '',time()-1000);
+      setcookie('login', '',time()-1000);
+      setcookie('pass', '',time()-1000);
       session_destroy();
       header('Location: index.php');
       exit();
@@ -183,8 +186,9 @@ else {
       //____________________________Авторизованный пользователь Меняет данные______________________________________  
 
       // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
-      if (isset($_COOKIE['all_OK'])) {
-        setcookie('session_login', $_SESSION['login']);
+      if (isset($_COOKIE['all_OK'])) 
+      {
+        setcookie('post_autoriz_uzer_index', 1);
         $update;
         $form = array(
           'name' => $name,
@@ -197,11 +201,11 @@ else {
 
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
         try {
-          $sth1 = $dbh->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
+          $sth1 = $db->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
           $sth1->execute(array($_SESSION['login']));
           $id = $sth1->fetch(PDO::FETCH_ASSOC);
 
-          $sth2 = $dbh->prepare("SELECT * FROM `MainData` WHERE `id` = ?"); // запрос данных пользователя
+          $sth2 = $db->prepare("SELECT * FROM `MainData` WHERE `id` = ?"); // запрос данных пользователя
           $sth2->execute(array($id['id']));
           $data = $sth2->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -265,8 +269,8 @@ else {
           exit();
         }
         setcookie('save', 1);
-        setcookie('login', $loginuser, time() + 30 * 24 * 60 * 60);
-        setcookie('pass', $passuser, time() + 30 * 24 * 60 * 60);
+        setcookie('login', $loginuser);
+        setcookie('pass', $passuser);
         header('Location: index.php');
         exit(); //или ссылка
       }
