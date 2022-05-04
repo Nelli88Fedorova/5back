@@ -65,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   // if(!isset($_COOKIE['all_OK'])) setcookie('not_isset_all_OK_index',1111);
   if (empty($errors) && isset($_COOKIE['all_OK'])) {
     // загрузить данные пользователя из БД
-    setcookie('get_avtoriz_uzer_data_from_db', 111111);
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
     try {
       $sth1 = $db->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
@@ -189,8 +188,7 @@ else {
 
       // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
       if (isset($_COOKIE['all_OK'])) {
-        setcookie('post_autoriz_uzer_index', 1);
-        $update;
+        $update;$request = array();$data; $id;
         $form = array(
           'name' => $name,
           'email' => $email,
@@ -199,19 +197,19 @@ else {
           'numberOfLimb' => $hand,
           'biography' => $biography,
         );
-        $data;
+        
         $parametrs2 = array(
           'name' => 'name', 'email' => 'email', 'date' => 'age', 'gender' => 'gender',
           'hand' => 'numberOfLimb', 'biography' => 'biography',
         );
-        $id;
+       
 
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
         try {
           $sth1 = $db->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
           $sth1->execute(array($_COOKIE['all_OK']));
           $id = $sth1->fetch(PDO::FETCH_ASSOC);
-
+          setcookie('update_id', $id['id']);
           $sth2 = $db->prepare("SELECT * FROM `MainData` WHERE `id` = ?"); // запрос данных пользователя
           $sth2->execute(array($id['id']));
           $data = $sth2->fetch(PDO::FETCH_ASSOC);
@@ -219,7 +217,7 @@ else {
           print('Error:' . $e->GetMessage());
           exit();
         }
-
+        setcookie('update_data[name]', $data['name']);
         foreach ($parametrs2 as $name => $v) {
           if (isset($data[$v]) && $data[$v] != $form[$v]) $update[$v] = 1;
         }
@@ -231,7 +229,7 @@ else {
         } //Нет изменений в данных
         else {
           //перезаписать данные в БД новыми данными,кроме логина и пароля. подготовить запрос
-          $request = array();
+          
           foreach ($parametrs2 as $name => $v) {
             if (isset($update[$v]))
               $request[$name] = $data[$v];
@@ -248,15 +246,13 @@ else {
             exit();
           }
           setcookie('update', 1, time() + 30 * 24);
-          echo '$request<br/>';
-          foreach ($request as $key => $v) echo $key . ':  ' . $v;
+          setcookie('update_request[name]', $request['name']);
           header('Location: index.php');
           exit(); //Update
         }
       } else //__________________Неавторизованный пользователь выдаём login_______________________________
       {
-        setcookie('all_OK', '', time() - 1000);
-        echo 'Генерация пароля  <br/>';
+        //setcookie('all_OK', '', time() - 1000);
         // Генерируем уникальный логин и пароль.
         $chars = '0123456789abcdefghijklmnopqrstuvwxyz';
         $loginuser =  substr(str_shuffle($chars), 0, 3);
