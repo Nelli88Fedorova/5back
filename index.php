@@ -1,7 +1,9 @@
 <?php
-$ar = array();
-foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
-foreach ($ar as $key => $v) echo $key . ':  ' . ' ' . $v . '<br/>';
+// $ar = array();
+// foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
+// foreach ($ar as $key => $v) echo $key . ':  ' . ' ' . $v . '<br/>';
+foreach ($_COOKIE as $key => $value) echo $key . ':  ' . ' ' . $value . '<br/>';
+
 
 header('Content-Type: text/html; charset=UTF-8');
 $user = 'u47586';
@@ -67,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // загрузить данные пользователя из БД
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
     try {
-      $sth1 = $db->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
+      $sth1 = $db->prepare("SELECT 'id' FROM 'users' WHERE 'login' = ?");
       $sth1->execute(array($_COOKIE['all_OK']));
       $id = $sth1->fetch(PDO::FETCH_ASSOC);
       if (empty($id)) {
@@ -206,20 +208,23 @@ else {
 
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
         try {
-          $sth1 = $db->prepare("SELECT `id` FROM `users` WHERE `login` = ?");
+          $sth1 = $db->prepare("SELECT 'id' FROM 'users' WHERE 'login' = ?");
           $sth1->execute(array($_COOKIE['all_OK']));
           $id = $sth1->fetch(PDO::FETCH_ASSOC);
           setcookie('update_id', $id['id']);
-          $sth2 = $db->prepare("SELECT * FROM `MainData` WHERE `id` = ?"); // запрос данных пользователя
+          $sth2 = $db->prepare("SELECT '*' FROM 'MainData' WHERE 'id' = ?"); // запрос данных пользователя
           $sth2->execute(array($id['id']));
           $data = $sth2->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
           print('Error:' . $e->GetMessage());
           exit();
         }
-        setcookie('update_data[name]', $data['name']);
+        $coo="";
+        foreach($data as $k=>$v)
+        $coo.=$k;
+        setcookie('update_data', $coo);
         foreach ($parametrs2 as $name => $v) {
-          if (isset($data[$v]) && $data[$v] != $form[$v]) $update[$v] = 1;
+          if ($data[$v] != $form[$v]) $update[$v] = 1;
         }
         if (empty($update)) {
           setcookie('thesame', 1);
@@ -232,13 +237,16 @@ else {
           
           foreach ($parametrs2 as $name => $v) {
             if (isset($update[$v]))
-              $request[$name] = $data[$v];
-            else $request[$name] = $form[$v];
+              $request[$name] = $form[$v];
+            else $request[$name] = $data[$v];
           }
-          //$request[] = $id['id'];
+          $coo2="";
+        foreach($request as $k=>$v)
+        $coo2.=$k;
+        setcookie('update_request', $coo2);
           try {
             $stmt = $db->prepare("UPDATE MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
-            $stmt->execute($request['name'], $request['email'], $request['date'], $request['gender'], $request['hand'], $request['gender'], $request['biography'], $id['id']);
+            $stmt->execute([$request['name'], $request['email'], $request['date'], $request['gender'], $request['hand'], $request['gender'], $request['biography'], $id['id']]);
             $super = $db->prepare("INSERT INTO Superpovers SET superpower=?");
             $super->execute(array($syperpover));
           } catch (PDOException $e) {
@@ -246,7 +254,7 @@ else {
             exit();
           }
           setcookie('update', 1, time() + 30 * 24);
-          setcookie('update_request[name]', $request['name']);
+          
           header('Location: index.php');
           exit(); //Update
         }
