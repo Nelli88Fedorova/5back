@@ -190,7 +190,10 @@ else {
 
       // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
       if (isset($_COOKIE['all_OK'])) {
-        $update;$request = array();$data; $id;
+        $update;
+        $request = array();
+        $data;
+        $id;
         $form = array(
           'name' => $name,
           'email' => $email,
@@ -199,12 +202,12 @@ else {
           'numberOfLimb' => $hand,
           'biography' => $biography,
         );
-        
+
         $parametrs2 = array(
           'name' => 'name', 'email' => 'email', 'date' => 'age', 'gender' => 'gender',
           'hand' => 'numberOfLimb', 'biography' => 'biography',
         );
-       
+
 
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
         try {
@@ -219,31 +222,28 @@ else {
           print('Error:' . $e->GetMessage());
           exit();
         }
-        $coo="";
-        foreach($data as $k=>$v)
-        $coo.=$k;
-        setcookie('update_data', $coo);
+        $coo = "";
+        foreach ($data as $k => $v)
+          $coo .= $k . ": ".$v." ";
+        setcookie('update_data_from_db', $coo);
         foreach ($parametrs2 as $name => $v) {
           if ($data[$v] != $form[$v]) $update[$v] = 1;
         }
         if (empty($update)) {
           setcookie('thesame', 1);
           $messages['thesame'] = '<div style="color:gray" class="position-absolute top-0 start-50"> Нет изменений.</div>';
-          header('Location: index.php');
+          header('Location: index.php');//Нет изменений в данных
           exit();
-        } //Нет изменений в данных
+        } 
         else {
           //перезаписать данные в БД новыми данными,кроме логина и пароля. подготовить запрос
-          
           foreach ($parametrs2 as $name => $v) {
-            if (isset($update[$v]))
-              $request[$name] = $form[$v];
-            else $request[$name] = $data[$v];
+            $request[$name] = $form[$v];
           }
-          $coo2="";
-        foreach($request as $k=>$v)
-        $coo2.=$k;
-        setcookie('update_request', $coo2);
+          $coo2 = "";
+          foreach ($request as $k => $v)
+            $coo2 .= $k . ": ".$v." ";
+          setcookie('update_request', $coo2);
           try {
             $stmt = $db->prepare("UPDATE MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
             $stmt->execute([$request['name'], $request['email'], $request['date'], $request['gender'], $request['hand'], $request['gender'], $request['biography'], $id['id']]);
@@ -254,7 +254,7 @@ else {
             exit();
           }
           setcookie('update', 1, time() + 30 * 24);
-          
+
           header('Location: index.php');
           exit(); //Update
         }
