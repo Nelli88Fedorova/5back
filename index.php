@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     // загрузить данные пользователя из БД
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
     try {
-      $sth1 = $db->prepare("SELECT 'id' FROM 'users' WHERE 'login' = ?");
+      $sth1 = $db->prepare("SELECT id FROM users WHERE login = ?");
       $sth1->execute(array($_COOKIE['all_OK']));
       $id = $sth1->fetch(PDO::FETCH_ASSOC);
       if (empty($id)) {
@@ -208,11 +208,11 @@ else {
 
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
         try {
-          $sth1 = $db->prepare("SELECT 'id' FROM 'users' WHERE 'login' = ?");
+          $sth1 = $db->prepare("SELECT id FROM users WHERE login = ?");
           $sth1->execute(array($_COOKIE['all_OK']));
           $id = $sth1->fetch(PDO::FETCH_ASSOC);
           setcookie('update_id', $id['id']);
-          $sth2 = $db->prepare("SELECT '*' FROM 'MainData' WHERE 'id' = ?"); // запрос данных пользователя
+          $sth2 = $db->prepare("SELECT * FROM MainData WHERE id = ?"); // запрос данных пользователя
           $sth2->execute(array($id['id']));
           $data = $sth2->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
