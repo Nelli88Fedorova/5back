@@ -68,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (empty($errors) && isset($_COOKIE['all_OK'])) {
     // загрузить данные пользователя из БД
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     try {
       $sth1 = $db->prepare("SELECT id FROM users WHERE login = ?");
       $sth1->execute(array($_COOKIE['all_OK']));
@@ -212,6 +213,7 @@ else {
 
 
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
           $sth1 = $db->prepare("SELECT id FROM users WHERE login = ?");
           $sth1->execute(array($_COOKIE['all_OK']));
@@ -241,28 +243,27 @@ else {
           foreach ($parametrs2 as $name => $v) {
             $request[$v] = $form[$v];
           }
-          //$request['id']=$id['id'];
+          $request['id']=$id['id'];
           $coo2 = "";
           foreach ($request as $k => $v)
             $coo2 .= $k . ": " . $v . " ";
           setcookie('update_request', $coo2);
 
-          //$sql = "UPDATE MyGuests SET lastname='Doe' WHERE id=2";
-
-          $string = "UPDATE MainData SET";
-          foreach ($request as $k => $v)
-            $string .= " " . $k . " = " . $v . ",";
-          $string = substr_replace($string, "", -1) . " WHERE id = " . $id['id'];
+         
+          // $string = "UPDATE MainData SET";
+          // foreach ($request as $k => $v)
+          //   $string .= " " . $k . " = " . $v . ",";
+          // $string = substr_replace($string, "", -1) . " WHERE id = " . $id['id'];
 
           $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
           $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
           try {
-            // $stmt = $db->prepare("UPDATE MainData SET name =:name, email =:email, age=age:, gender=:gender, numberOfLimb=:numberOfLimb, biography=:biography WHERE id=:id");
-            // $stmt->execute($request);
-            $stmt = $db->prepare($string);
-            $stmt->execute();
+            $stmt = $db->prepare("UPDATE MainData SET name =:name, email =:email, age=age:, gender=:gender, numberOfLimb=:numberOfLimb, biography=:biography WHERE id=:id");
+            $stmt->execute($request);
+            // $stmt = $db->prepare($string);
+            // $stmt->execute();
             setcookie('update_kol_string', $stmt->rowCount() . " strings");
-            
+
             $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
             $super->execute(array($syperpover, $id['id']));
           } catch (PDOException $e) {
@@ -285,6 +286,7 @@ else {
 
         // Сохранение данных формы, логина и хеш md5() пароля в базу данных.
         $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
           $stmt = $db->prepare("INSERT INTO MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=?");
           $stmt->execute(array($name, $email, $date, $gender, $hand, $biography));
