@@ -1,15 +1,13 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
-$ar = array();
-foreach ($_COOKIE as $key => $value) $ar[$key] = $value;
-foreach ($ar as $key => $v) echo $key . ':' . ' ' . $v . '<br/>';
-
 $string = array(
-  'exitlog1' => '<div style="color:green"> Выход выполнен.</div>',
-  'exitlog2' => '<div style="color:green"> Вы не авторизованы.</div>',
-  'enterlog' => '<div style="color:green"> Ошибка входа.</div>',
-  'enterlogerror' => '<div style="color:green"> заполните все поля.</div>',
-  'registration' => '<div style="color:green"> Что бы начать регистрацию выйдете из аккаунта.</div>',
+  'exitlog1' => '<div class="for" style="color:green"> Выход выполнен.</div>',
+  'exitlog2' => '<div class="for" style="color:green"> Вы не авторизованы.</div>',
+  'enterlog' => '<div class="for" style="color:green"> Ошибка входа.</div>',
+  'enterlogerror' => '<div class="for" style="color:green"> заполните все поля.</div>',
+  'registration' => '<div class="for" style="color:green"> Что бы начать регистрацию выйдете из аккаунта.</div>',
+  'notexist' => '<div class="for" style="color:red"> Пользователь с логином ' . $_COOKIE['login'] . ' не существует!</div>',
+  'wrong' => '<div class="for" style="color:red"> Неверный пароль!</div>',
 );
 $msg = array();
 foreach ($string as $name => $str) {
@@ -19,8 +17,7 @@ foreach ($string as $name => $str) {
   setcookie($name, '', time() - 100000);
 }
 
-// В суперглобальном массиве $_SERVER PHP сохраняет некторые заголовки запроса HTTP
-// и другие сведения о клиненте и сервере, например метод текущего запроса $_SERVER['REQUEST_METHOD'].
+//_____________________________________________________GET____________________________________________________
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 ?>
   <!DOCTYPE html>
@@ -39,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         margin: 0 auto;
         margin-top: 50px;
       }
-
+      
       input {
         margin-top: 10px;
         margin-bottom: 10px;
@@ -72,8 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       </form>
 
       <?php
-      $msgs = array('exitlog1', 'exitlog2', 'enterlog', 'enterlogerror', 'registration', 'exitlog', 'wrong', 'notexist');
-      foreach ($msgs as $m) if (isset($msg[$m])) print($msg[$m]);
+      foreach ($string as $name=>$v) if (isset($msg[$name])) print($msg[$name]);
       ?>
     </div>
   </body>
@@ -82,8 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 <?php
 } //________________________________POST_______________________________
 else {
-  // setcookie('login', '', time() - 100000);
-  // setcookie('pass', '', time() - 100000);
   $loginu = $_POST['login'];
   $passu = $_POST['pass'];
   $enterlog = 0;
@@ -115,18 +109,15 @@ else {
   } else
   if ($enterlog == 1) //Вход
   {
-    echo 'Кнопка Вход <br/>'; setcookie('butt_enter_login',1);
     if (!empty($loginu) && !empty($passu))
     {
-      setcookie('not_empty_loginAndPass_login',1);
       //  Проверть есть ли такой логин и пароль в базе данных.
-      echo 'Не пустые поля <br/>'; setcookie('butt_enter',1);
       //вход в БД
       $user = 'u47586';
       $pass = '3927785';
       $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
-      //поиск соответствующего логина
       $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      //поиск соответствующего логина
       try 
       {
         $sth = $db->prepare("SELECT '*' FROM `users` WHERE `login` = ?");
@@ -138,23 +129,18 @@ else {
         exit();
       }
       if (empty($value)) // нет такого пользователя
-      { setcookie('empty_request',$value['id']);
-        echo '$value[id] ' . $value['id'] . 'Пуст<br/>'; // Выдать сообщение об ошибках.
-        $msg['notexist'] = '<div style="color:red"> Пользователь с логином ' . $loginu . ' не существует!</div>';
+      { setcookie('notexist',1); // Выдать сообщение об ошибках.
         header('Location: login.php');
         exit();
-      } else if (password_verify($passu, $value['pass'])) {
-        echo 'Неверный пароль <br/>'; setcookie('pass_error',$passu);
-        $msg['wrong'] = '<div style="color:red"> Неверный пароль!</div>';
+      } else if (!password_verify($passu, $value['pass'])) {
+        setcookie('wrong',1);
         header('Location: login.php');
         exit();
-      } else {
+      } else { //Если все ок, то авторизуем пользователя.
         setcookie('all_OK',$loginu);
-        echo 'Всё ОК <br/>'; //Если все ок, то авторизуем пользователя.
         session_start();
         $_SESSION['login'] = $loginu;
         $_SESSION['uid'] = $value['id'];
-        // include('form.php');
         header('Location: index.php'); //открыть форму
         exit();
       }
