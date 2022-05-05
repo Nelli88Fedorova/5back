@@ -244,6 +244,7 @@ else {
             $request[$v] = $form[$v];
           }
           $request['id']=$id['id'];
+
           $coo2 = "";
           foreach ($request as $k => $v)
             $coo2 .= $k . ": " . $v . " ";
@@ -258,14 +259,14 @@ else {
           $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
           $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
           try {
-            $stmt = $db->prepare("UPDATE MainData SET name =:name, email =:email, age=age:, gender=:gender, numberOfLimb=:numberOfLimb, biography=:biography WHERE id=:id");
+            $stmt = $db->prepare("UPDATE MainData SET name =, email =?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
             $stmt->execute($request);
             // $stmt = $db->prepare($string);
             // $stmt->execute();
             setcookie('update_kol_string', $stmt->rowCount() . " strings");
 
-            $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
-            $super->execute(array($syperpover, $id['id']));
+            // $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
+            // $super->execute(array($syperpover, $id['id']));
           } catch (PDOException $e) {
             print('Error:' . $e->GetMessage());
             exit();
