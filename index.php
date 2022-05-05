@@ -124,10 +124,12 @@ else {
     }
   if ($exitind == 1) {
     if (isset($_COOKIE['all_OK'])) {
-      setcookie('exit', 1);
-      setcookie('all_OK', '', time() - 1000);
-      setcookie('login', '', time() - 1000);
-      setcookie('pass', '', time() - 1000);
+      // setcookie('exit', 1);
+      // setcookie('all_OK', '', time() - 1000);
+      // setcookie('login', '', time() - 1000);
+      // setcookie('pass', '', time() - 1000);
+      foreach ($_COOKIE as $key => $value) setcookie($key, '', time() - 1000);
+
       session_destroy();
       header('Location: index.php');
       exit();
@@ -244,11 +246,12 @@ else {
           foreach ($request as $k => $v)
             $coo2 .= $k . ": ".$v." ";
           setcookie('update_request', $coo2);
+          $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
           try {
             $stmt = $db->prepare("UPDATE MainData SET name =:name, email =:email, age=age:, gender=:gender, numberOfLimb=:numberOfLimb, biography=:biography WHERE id=:id");
             $stmt->execute($request);
             $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
-            $super->execute([$syperpover, $id['id']]);
+            $super->execute(array($syperpover, $id['id']));
           } catch (PDOException $e) {
             print('Error:' . $e->GetMessage());
             exit();
