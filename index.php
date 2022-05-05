@@ -247,8 +247,8 @@ else {
           try {
             $stmt = $db->prepare("UPDATE MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
             $stmt->execute([$request['name'], $request['email'], $request['date'], $request['gender'], $request['hand'], $request['gender'], $request['biography'], $id['id']]);
-            $super = $db->prepare("INSERT INTO Superpovers SET superpower=?");
-            $super->execute(array($syperpover));
+            $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
+            $super->execute([$syperpover, $id['id']]);
           } catch (PDOException $e) {
             print('Error:' . $e->GetMessage());
             exit();
