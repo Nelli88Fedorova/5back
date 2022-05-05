@@ -265,8 +265,8 @@ else {
             // $stmt->execute();
             setcookie('update_kol_string', $stmt->rowCount() . " strings");
 
-            // $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
-            // $super->execute(array($syperpover, $id['id']));
+            $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
+            $super->execute(array($syperpover, $id['id']));
           } catch (PDOException $e) {
             print('Error:' . $e->GetMessage());
             exit();
