@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     'biography' => " Биография", 'syperpover' => " Суперспособность", 'check' => " "
   );
   foreach ($errors as $name => $val) {
-    if (isset($name)) {
+    if (isset($errors[$name])) {
       $errorname = $name . "_error";
       if ((int)$errors[$name] == 1) $messages[$name] = '<div style="color:red">Заполните поле' . (string)$formassage[$name] . '.</div>';
       else if ((int)$errors[$name] == 2) $messages[$name] = '<div style="color:red"> Недопустимые символы в поле' . (string)$formassage[$name] . '! </div>';
@@ -238,15 +238,15 @@ else {
         else {
           //перезаписать данные в БД новыми данными,кроме логина и пароля. подготовить запрос
           foreach ($parametrs2 as $name => $v) {
-            $request[$name] = $form[$v];
-          }
+            $request[$v] = $form[$v];
+          }$request['id']=$id['id'];
           $coo2 = "";
           foreach ($request as $k => $v)
             $coo2 .= $k . ": ".$v." ";
           setcookie('update_request', $coo2);
           try {
-            $stmt = $db->prepare("UPDATE MainData SET name = ?, email = ?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
-            $stmt->execute([$request['name'], $request['email'], $request['date'], $request['gender'], $request['hand'], $request['gender'], $request['biography'], $id['id']]);
+            $stmt = $db->prepare("UPDATE MainData SET name =:name, email =:email, age=age:, gender=:gender, numberOfLimb=:numberOfLimb, biography=:biography WHERE id=:id");
+            $stmt->execute($request);
             $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
             $super->execute([$syperpover, $id['id']]);
           } catch (PDOException $e) {
