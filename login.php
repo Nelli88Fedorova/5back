@@ -125,7 +125,7 @@ else {
       //поиск соответствующего логина
       try 
       {
-        $sth = $db->prepare("SELECT '*' FROM 'users' WHERE 'login' = ?");
+        $sth = $db->prepare("SELECT * FROM users WHERE login = ?");
         $sth->execute(array($loginu));
         $value = $sth->fetch(PDO::FETCH_ASSOC);
       } catch (PDOException $e) 
@@ -133,9 +133,9 @@ else {
         print('Error:' . $e->GetMessage());
         exit();
       }
+      setcookie('enter_request_id_login',$value['id']);
       if (empty($value)) // нет такого пользователя
-      { setcookie('empty_request',$value['id']);
-        echo '$value[id] ' . $value['id'] . 'Пуст<br/>'; // Выдать сообщение об ошибках.
+      { setcookie('empty_request_login',$value['id']); // Выдать сообщение об ошибках.
         $msg['notexist'] = '<div style="color:red"> Пользователь с логином ' . $loginu . ' не существует!</div>';
         header('Location: login.php');
         exit();
