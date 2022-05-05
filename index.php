@@ -226,7 +226,7 @@ else {
         }
         $coo = "";
         foreach ($data as $k => $v)
-          $coo .= $k . ": ".$v." ";
+          $coo .= $k . ": " . $v . " ";
         setcookie('update_data_from_db', $coo);
         foreach ($parametrs2 as $name => $v) {
           if ($data[$v] != $form[$v]) $update[$v] = 1;
@@ -234,22 +234,35 @@ else {
         if (empty($update)) {
           setcookie('thesame', 1);
           $messages['thesame'] = '<div style="color:gray" class="position-absolute top-0 start-50"> Нет изменений.</div>';
-          header('Location: index.php');//Нет изменений в данных
+          header('Location: index.php'); //Нет изменений в данных
           exit();
-        } 
-        else {
+        } else {
           //перезаписать данные в БД новыми данными,кроме логина и пароля. подготовить запрос
           foreach ($parametrs2 as $name => $v) {
             $request[$v] = $form[$v];
-          }$request['id']=$id['id'];
+          }
+          //$request['id']=$id['id'];
           $coo2 = "";
           foreach ($request as $k => $v)
-            $coo2 .= $k . ": ".$v." ";
+            $coo2 .= $k . ": " . $v . " ";
           setcookie('update_request', $coo2);
+
+          //$sql = "UPDATE MyGuests SET lastname='Doe' WHERE id=2";
+
+          $string = "UPDATE MainData SET";
+          foreach ($request as $k => $v)
+            $string .= " " . $k . " = " . $v . ",";
+          $string = substr_replace($string, "", -1) . " WHERE id = " . $id['id'];
+
           $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+          $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
           try {
-            $stmt = $db->prepare("UPDATE MainData SET name =:name, email =:email, age=age:, gender=:gender, numberOfLimb=:numberOfLimb, biography=:biography WHERE id=:id");
-            $stmt->execute($request);
+            // $stmt = $db->prepare("UPDATE MainData SET name =:name, email =:email, age=age:, gender=:gender, numberOfLimb=:numberOfLimb, biography=:biography WHERE id=:id");
+            // $stmt->execute($request);
+            $stmt = $db->prepare($string);
+            $stmt->execute();
+            setcookie('update_kol_string', $stmt->rowCount() . " strings");
+            
             $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
             $super->execute(array($syperpover, $id['id']));
           } catch (PDOException $e) {
