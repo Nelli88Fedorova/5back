@@ -126,6 +126,7 @@ else {
       $pass = '3927785';
       $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
       //поиск соответствующего логина
+      $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       try 
       {
         $sth = $db->prepare("SELECT '*' FROM `users` WHERE `login` = ?");
