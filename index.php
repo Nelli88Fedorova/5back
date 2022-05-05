@@ -259,10 +259,10 @@ else {
           $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
           $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
           try {
-            $stmt = $db->prepare("UPDATE MainData SET name =, email =?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
+            $stmt = $db->prepare("UPDATE MainData SET name =?, email =?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
             $stmt->execute($request['name'], $request['email'],$request['age'],$request['gender'],$request['numberOfLimb'],$request['biography'],$request['id']);
-            // $stmt = $db->prepare($string);
-            // $stmt->execute();
+            $stmt = $db->prepare($string);
+            $stmt->execute();
             setcookie('update_kol_string', $stmt->rowCount() . " strings");
 
             // $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
