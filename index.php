@@ -18,7 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       setcookie('save', '', time() - 100000);
     }
   }
-  if (isset($_COOKIE['all_OK'])) setcookie('user',1);
+  $p;
+  if (isset($_COOKIE['all_OK'])){
+     setcookie('user',1);
+    $p='<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0  end-0"> Пользователь: ' . $_COOKIE['all_OK'] . '</div>';
+  }else $p="";
 
   $errors = array();
   $values = array();
@@ -29,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     'exit' => '<div style="color:green" class="position-absolute top-0 start-50"> Выход выполнен.</div>',
     'noexit' => '<div style="color:green" class="position-absolute top-0 start-50">Вы не авторизованы.</div>',
     'thesame' => '<div style="color:gray" class="position-absolute top-0 start-50"> Нет изменений.</div>',
-    'user'=>'<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0  end-0"> Пользователь: ' . $_COOKIE['all_OK'] . '</div>',
-  );
+    'user'=>$p,
+   );
   foreach ($strinformassage as $name => $str) {
     if (isset($_COOKIE[$name])) {
       $messages[$name] = $str;
