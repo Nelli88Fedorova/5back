@@ -6,7 +6,7 @@ $string = array(
   'enterlog' => '<div class="for" style="color:green"> Ошибка входа.</div>',
   'enterlogerror' => '<div class="for" style="color:green"> заполните все поля.</div>',
   'registration' => '<div class="for" style="color:green"> Что бы начать регистрацию выйдете из аккаунта.</div>',
-  'notexist' => '<div class="for" style="color:red"> Пользователь с логином ' . $_COOKIE['login'] . ' не существует!</div>',
+  'notexist' => '<div class="for" style="color:red"> Пользователь не существует!</div>',
   'wrong' => '<div class="for" style="color:red"> Неверный пароль!</div>',
 );
 $msg = array();
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         <input name="buttlog" type="submit" value="Enter" />
         <!-- <input name="registration" type="submit" value="регистрация" /> -->
-        <input name="buttlog" type="submit" value="Exit" />
+        <!-- <input name="buttlog" type="submit" value="Exit" /> -->
       </form>
 
       <?php
@@ -93,7 +93,7 @@ else {
     }
   if ($exitlog == 1) //Выход
   {
-    if (isset($_COOKIE['login'])) {
+    if (isset($_COOKIE['all_OK'])) {
       session_destroy();
       setcookie('exitlog1', 1);
       setcookie('all_OK','',time()-1000);
@@ -132,7 +132,7 @@ else {
       { setcookie('notexist',1); // Выдать сообщение об ошибках.
         header('Location: login.php');
         exit();
-      } else if (!password_verify($passu, $value['pass'])) {
+      } else if (password_verify($passu, $value['pass'])) {
         setcookie('wrong',1);
         header('Location: login.php');
         exit();
