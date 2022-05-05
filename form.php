@@ -45,6 +45,7 @@
             <?php if (isset($messages['user'])) print($messages['user']); ?>
             <h4>
                   <form action="" method="POST">
+                  <?php if (isset($messages['name'])) print($messages['name']); ?>
                         <label> Имя:<br />
                               <input name="name" <?php if (isset($errors['name']) && $errors['name'] == 2)  print 'style="color:red"';
                                                       else print 'style="color:black"'; ?> value="<?php print $values['name']; ?>" /></label><br />
