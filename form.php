@@ -85,7 +85,7 @@
                               <?php if (isset($messages['biography'])) print($messages['biography']); ?>
                               Биография:<br />
                               <textarea name="biography" <?php if (isset($errors['biography']) && $errors['biography'] == 2) print 'style="color:red"';
-                                                            else print 'style="color:black"'; ?> placeholder=""><?php print $values['biography']; ?> </textarea>
+                                                            else print 'style="color:black"'; ?> placeholder=""><?php print $values['biography']; ?></textarea>
                         </label><br />
                         <br />
                         <?php if (isset($errors['check'])) print('<div style="color:red"> Необходимо согласия на обработку данных!</div>'); ?>
