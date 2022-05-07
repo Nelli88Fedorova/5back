@@ -8,19 +8,20 @@ $parametrs2 = array(
   'hand' => 'numberOfLimb', 'biography' => 'biography',
 );
 $messages = array();
-
+session_start();
 //___________________________________________________GET__________________
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (isset($_COOKIE['save'])) {
-    if (isset($_COOKIE['login'])) {
-      $messages['enter'] = '<div class="position-absolute top-0 start-50" style="color:green">Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
-      и паролем <strong>' . $_COOKIE['pass'] . '</strong> для изменения данных.' . '</div>';
+    if (isset($_SESSION['login'])) {
+      $messages['enter'] = '<div class="position-absolute top-0 start-50" style="color:green">
+      Вы можете <a href="login.php">войти</a> с логином <strong>' . $_SESSION['login'] . '</strong>
+      и паролем <strong>' . $_SESSION['pass'] . '</strong> для изменения данных.' . '</div>';
       setcookie('save', '', time() - 100000);
     }
   }
   $p;
-  if (isset($_COOKIE['all_OK'])){
-    $messages['user']='<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0  end-0"> Пользователь: ' . $_COOKIE['all_OK'] . '</div>';
+  if (isset($_SESSION['login'])){
+    $messages['user']='<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0  end-0"> Пользователь: ' . $_SESSION['login'] . '</div>';
   }else $messages['user']="";
 
   $errors = array();
@@ -60,13 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   //_________________________________________________Авторизованный пользователь____________________________
 
-  if (empty($errors) && isset($_COOKIE['all_OK'])) {
+  if (empty($errors) && isset($_SESSION['login'])) {
     // загрузить данные пользователя из БД
     $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     try {
       $sth1 = $db->prepare("SELECT id FROM users WHERE login = ?");
-      $sth1->execute(array($_COOKIE['all_OK']));
+      $sth1->execute(array($_SESSION['login']));
       $id = $sth1->fetch(PDO::FETCH_ASSOC);
 
       $sth2 = $db->prepare('SELECT * FROM `MainData` WHERE `id` = ?'); // запрос данных пользователя
@@ -107,7 +108,9 @@ else {
         break;
     }
   if ($exitind == 1) {//Выход
-    if (isset($_COOKIE['all_OK'])) {
+    if (isset($_SESSION['login'])) {
+      unset($_SESSION['uid']);
+      unset($_SESSION['login']);
       setcookie('exit', 1);
       setcookie('all_OK', '', time() - 1000);
       setcookie('login', '', time() - 1000);
@@ -172,7 +175,8 @@ else {
       //____________________________Авторизованный пользователь Меняет данные______________________________________  
 
       // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
-      if (isset($_COOKIE['all_OK'])) {
+      if (isset($_SESSION['login'])) {
+        
         $update;
         $request = array();
         $data;
@@ -195,7 +199,7 @@ else {
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
           $sth1 = $db->prepare("SELECT id FROM users WHERE login = ?");
-          $sth1->execute(array($_COOKIE['all_OK']));
+          $sth1->execute(array($_SESSION['login']));
           $id = $sth1->fetch(PDO::FETCH_ASSOC);
           setcookie('update_id', $id['id']);
           $sth2 = $db->prepare("SELECT * FROM MainData WHERE id = ?"); // запрос данных пользователя
@@ -253,7 +257,7 @@ else {
           $super = $db->prepare("INSERT INTO Superpovers SET superpower=?");
           $super->execute(array($syperpover));
 
-          $mdpass = password_hash($passuser, PASSWORD_DEFAULT);
+          $mdpass = MD5($passuser);
           $log = $db->prepare("INSERT INTO users SET login = ?, pass = ?");
           $log->execute(array($loginuser, $mdpass));
         } catch (PDOException $e) {
