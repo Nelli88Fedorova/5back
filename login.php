@@ -120,8 +120,8 @@ else {
       //поиск соответствующего логина
       try 
       {
-        $sth = $db->prepare("SELECT '*' FROM `users` WHERE `login` = ?");
-        $sth->execute(array($loginu));
+        $sth = $db->prepare("SELECT '*' FROM `users` WHERE `login` = ? and 'pass'= ?");
+        $sth->execute(array($loginu, md5($passu)));
         $value = $sth->fetch(PDO::FETCH_ASSOC);
       } catch (PDOException $e) 
       {
@@ -134,13 +134,15 @@ else {
         setcookie('login',$loginu);
         header('Location: login.php');
         exit();
-      } else if ($value['pass']!==MD5($passu)) {
-        setcookie('wrong',1);
-        setcookie('pass',1,time()-100);
-        setcookie('pass',$passu);
-        header('Location: login.php');
-        exit();
-      } else { //Если все ок, то авторизуем пользователя.
+      } else 
+      // if (MD5($passu)!==$value['pass']) {
+      //   setcookie('wrong',1);
+      //   setcookie('pass',1,time()-100);
+      //   setcookie('pass',$passu);
+      //   header('Location: login.php');
+      //   exit();
+      // } else
+      { //Если все ок, то авторизуем пользователя.
         setcookie('all_OK',1);
         session_start();
         $_SESSION['login'] = $loginu;
