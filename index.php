@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (isset($_COOKIE['save'])) {
     if (isset($_COOKIE['login'])) {
       $messages['enter'] = '<div class="position-absolute top-0 start-50" style="color:green">
-      Вы можете <a href="login.php">войти</a> с логином <strong>' . $_SESSION['login'] . '</strong>
-      и паролем <strong>' . $_SESSION['pass'] . '</strong> для изменения данных.' . '</div>';
+      Вы можете <a href="login.php">войти</a> с логином <strong>' . $_COOKIE['login'] . '</strong>
+      и паролем <strong>' . $_COOKIE['pass'] . '</strong> для изменения данных.' . '</div>';
       setcookie('save', '', time() - 100000);
     }
   }
