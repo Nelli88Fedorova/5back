@@ -130,16 +130,21 @@ else {
       }
       if (empty($value)) // нет такого пользователя
       { setcookie('notexist',1); // Выдать сообщение об ошибках.
+        setcookie('login',1,time()-100);
+        setcookie('login',$loginu);
         header('Location: login.php');
         exit();
-      } else if (password_verify($passu, $value['pass'])) {
+      } else if ( $value['pass']!=MD5($passu)) {
         setcookie('wrong',1);
+        setcookie('pass',1,time()-100);
+        setcookie('pass',$passu);
         header('Location: login.php');
         exit();
       } else { //Если все ок, то авторизуем пользователя.
-        setcookie('all_OK',$loginu);
+        setcookie('all_OK',1);
         session_start();
         $_SESSION['login'] = $loginu;
+        $_SESSION['pass'] = $passu;
         $_SESSION['uid'] = $value['id'];
         header('Location: index.php'); //открыть форму
         exit();
