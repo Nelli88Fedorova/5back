@@ -120,8 +120,8 @@ else {
       //поиск соответствующего логина
       try 
       {
-        $sth = $db->prepare("SELECT '*' FROM `users` WHERE `login` = ? and 'pass'= ?");
-        $sth->execute(array($loginu, md5($passu)));
+        $sth = $db->prepare("SELECT '*' FROM `users` WHERE `login` = ?");
+        $sth->execute(array($loginu));
         $value = $sth->fetch(PDO::FETCH_ASSOC);
       } catch (PDOException $e) 
       {
