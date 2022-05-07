@@ -134,7 +134,7 @@ else {
         setcookie('login',$loginu);
         header('Location: login.php');
         exit();
-      } else if ( $value['pass']!=MD5($passu)) {
+      } else if ($value['pass']!==MD5($passu)) {
         setcookie('wrong',1);
         setcookie('pass',1,time()-100);
         setcookie('pass',$passu);
