@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
-foreach($_COOKIE as $n=> $v) if(isset($_COOKIE[$n])) print(' '.$n.': '.$v.'</br>');
+foreach ($_COOKIE as $n => $v) if (isset($_COOKIE[$n])) print(' ' . $n . ': ' . $v . '</br>');
 
 $string = array(
   'exitlog1' => '<div class="for" style="color:green"> Выход выполнен.</div>',
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         margin: 0 auto;
         margin-top: 50px;
       }
-      
+
       input {
         margin-top: 10px;
         margin-bottom: 10px;
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       </form>
 
       <?php
-      foreach ($string as $name=>$v) if (isset($msg[$name])) print($msg[$name]);
+      foreach ($string as $name => $v) if (isset($msg[$name])) print($msg[$name]);
       ?>
     </div>
   </body>
@@ -98,9 +98,9 @@ else {
     if (isset($_COOKIE['all_OK'])) {
       session_destroy();
       setcookie('exitlog1', 1);
-      setcookie('all_OK','',time()-1000);
-      setcookie('login', '',time()-1000);
-      setcookie('pass', '',time()-1000);
+      setcookie('all_OK', '', time() - 1000);
+      setcookie('login', '', time() - 1000);
+      setcookie('pass', '', time() - 1000);
       header('Location: login.php');
       exit();
     } else {
@@ -110,9 +110,9 @@ else {
     }
   } else
   if ($enterlog == 1) //Вход
-  {$value;
-    if (!empty($loginu) && !empty($passu))
-    {
+  {
+    $value;
+    if (!empty($loginu) && !empty($passu)) {
       //  Проверть есть ли такой логин и пароль в базе данных.
       //вход в БД
       $user = 'u47586';
@@ -120,42 +120,41 @@ else {
       $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
       $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       //поиск соответствующего логина
-      try 
-      {
-        $sth = $db->prepare("SELECT '*' FROM `users` WHERE `login` = ?");
+      try {
+        $sth = $db->prepare("SELECT * FROM `users` WHERE `login` = ?");
         $sth->execute(array($loginu));
         $value = $sth->fetch(PDO::FETCH_ASSOC);
-      } catch (PDOException $e) 
-      {
+        setcookie('$valueGetStr', $sth->rowCount());
+        
+      } catch (PDOException $e) {
         print('Error:' . $e->GetMessage());
         exit();
       }
       if (empty($value)) // нет такого пользователя
-      { setcookie('notexist',1); // Выдать сообщение об ошибках.
-        setcookie('login',1,time()-100);
-        setcookie('login',$loginu);
+      {
+        setcookie('notexist', 1); // Выдать сообщение об ошибках.
+        setcookie('login', 1, time() - 100);
+        setcookie('login', $loginu);
         header('Location: login.php');
         exit();
-      } else 
-      // if (!empty($passu) && md5($passu)!=$value['pass']) {
-      //   setcookie('wrong',$passu);
-      //   setcookie('pass',1,time()-100);
-      //   setcookie('pass',$passu);
-      //   header('Location: login.php');
-      //   exit();
-      // } else 
-      if(md5($passu)===$value['pass'])
-      { //Если все ок, то авторизуем пользователя.
-        setcookie('all_OK',1);
-        session_start();
-        $_SESSION['login'] = $loginu;
-        $_SESSION['pass'] = $passu;
-        $_SESSION['uid'] = $value['id'];
-        header('Location: index.php'); //открыть форму
-        exit();
-      }
-    } else
-    {
+      } else
+        // if (!empty($passu) && md5($passu)!=$value['pass']) {
+        //   setcookie('wrong',$passu);
+        //   setcookie('pass',1,time()-100);
+        //   setcookie('pass',$passu);
+        //   header('Location: login.php');
+        //   exit();
+        // } else 
+        if (md5($passu) === $value['pass']) { //Если все ок, то авторизуем пользователя.
+          setcookie('all_OK', 1);
+          session_start();
+          $_SESSION['login'] = $loginu;
+          $_SESSION['pass'] = $passu;
+          $_SESSION['uid'] = $value['id'];
+          header('Location: index.php'); //открыть форму
+          exit();
+        }
+    } else {
       setcookie('enterlog', 1);
       header('Location: login.php'); //Ошибка входа
       exit();
