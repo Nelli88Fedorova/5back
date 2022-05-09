@@ -20,20 +20,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
   }
   $p;
-  if (isset($_SESSION['login'])){
-    $messages['user']='<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0  end-0"> Пользователь: ' . $_SESSION['login'] . '</div>';
-  }else $messages['user']="";
+  if (isset($_SESSION['login'])) {
+    $messages['user'] = '<div style="border: 2px solid rgb(26, 18, 144)" class="position-absolute top-0  end-0"> Пользователь: ' . $_SESSION['login'] . '</div>';
+  } else $messages['user'] = "";
 
   $errors = array();
   $values = array();
-  
+
   $strinformassage = array(
     'change' => '<div style="color:green" class="position-absolute top-0 start-50"> Вы можете изменить данные отправленные ранее.</div>',
     'update' => '<div style="color:green" class="position-absolute top-0 start-50"> Данные обновлены.</div>',
     'exit' => '<div style="color:green" class="position-absolute top-0 start-50"> Выход выполнен.</div>',
     'noexit' => '<div style="color:green" class="position-absolute top-0 start-50">Вы не авторизованы.</div>',
     'thesame' => '<div style="color:gray" class="position-absolute top-0 start-50"> Нет изменений.</div>',
-   );
+  );
   foreach ($strinformassage as $name => $str) {
     if (isset($_COOKIE[$name])) {
       $messages[$name] = $str;
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       print('Error:' . $e->GetMessage());
       exit();
     }
-    
+
     foreach ($parametrs2 as $name => $v) {
       if (isset($data[$v])) {
         $values[$name] = filter_var($data[$v], FILTER_SANITIZE_SPECIAL_CHARS); //
@@ -86,12 +86,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   } else //__________________________________Не выполнен вход, заполнение формы из COOKIE____________________________________
   {
     foreach ($parametrs as $name) {
-      if (isset($_COOKIE[$name]))
-      {
+      if (isset($_COOKIE[$name])) {
         $values[$name] = strip_tags($_COOKIE[$name]);
       } else $values[$name] = '';
     }
-  } 
+  }
   include('form.php');
 } //____________________________________________POST__________________________________________________________________
 else {
@@ -107,7 +106,7 @@ else {
         $exitind = 1;
         break;
     }
-  if ($exitind == 1) {//Выход
+  if ($exitind == 1) { //Выход
     if (isset($_SESSION['login'])) {
       unset($_SESSION['uid']);
       unset($_SESSION['login']);
@@ -120,7 +119,7 @@ else {
       exit();
     } else {
       setcookie('noexit', 1);
-      header('Location: index.php'); 
+      header('Location: index.php');
       exit();
     }
   } else 
@@ -176,10 +175,11 @@ else {
 
       // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
       if (isset($_SESSION['login'])) {
-        
+
         $update;
         $request = array();
         $data;
+        $su;
         $id;
         $form = array(
           'name' => $name,
@@ -205,14 +205,20 @@ else {
           $sth2 = $db->prepare("SELECT * FROM MainData WHERE id = ?"); // запрос данных пользователя
           $sth2->execute(array($id['id']));
           $data = $sth2->fetch(PDO::FETCH_ASSOC);
+
+          $s0 = $db->prepare('SELECT * FROM `Superpovers` WHERE `id` = ?');
+          $s0->execute(array($id['id']));
+          $su = $s0->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
           print('Error:' . $e->GetMessage());
           exit();
         }
-        
+
         foreach ($parametrs2 as $name => $v) {
           if ($data[$v] != $form[$v]) $update[$v] = 1;
         }
+        if ($su['superpower'] != $superpover) $update['superpower'] = 1;
+
         if (empty($update)) {
           setcookie('thesame', 1);
           header('Location: index.php'); //Нет изменений в данных
@@ -222,23 +228,23 @@ else {
           foreach ($parametrs2 as $name => $v) {
             $request[$v] = $form[$v];
           }
-          $request['id']=$id['id'];
-         
+          $request['id'] = $id['id'];
+
           $db = new PDO('mysql:host=localhost;dbname=u47586', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
           $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
           try {
             $stmt = $db->prepare("UPDATE MainData SET name =?, email =?, age=?, gender=?, numberOfLimb=?, biography=? WHERE id=?");
-            $stmt->execute(array($request['name'], $request['email'],$request['age'],$request['gender'],$request['numberOfLimb'],$request['biography'],$request['id']));
-           
+            $stmt->execute(array($request['name'], $request['email'], $request['age'], $request['gender'], $request['numberOfLimb'], $request['biography'], $request['id']));
+
             $super = $db->prepare("UPDATE Superpovers SET superpower=?  WHERE id=?");
             $super->execute(array($syperpover, $id['id']));
           } catch (PDOException $e) {
             print('Error:' . $e->GetMessage());
             exit();
           }
-          setcookie('update', 1, time() + 30 * 24);//Update
+          setcookie('update', 1, time() + 30 * 24); //Update
           header('Location: index.php');
-          exit(); 
+          exit();
         }
       } else //__________________Неавторизованный пользователь выдаём login_______________________________
       {
@@ -268,7 +274,7 @@ else {
         setcookie('login', $loginuser);
         setcookie('pass', $passuser);
         header('Location: index.php');
-        exit(); 
+        exit();
       }
     }
   }
