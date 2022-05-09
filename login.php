@@ -1,6 +1,5 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
-foreach ($_COOKIE as $n => $v) if (isset($_COOKIE[$n])) print(' ' . $n . ': ' . $v . '</br>');
 
 $string = array(
   'exitlog1' => '<div class="for" style="color:green"> Выход выполнен.</div>',
