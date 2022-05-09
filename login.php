@@ -1,5 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
+foreach($_COOKIE as $n=> $v) if(isset($_COOKIE[$n])) print(' '.$n.': '.$v.'</br>');
+
 $string = array(
   'exitlog1' => '<div class="for" style="color:green"> Выход выполнен.</div>',
   'exitlog2' => '<div class="for" style="color:green"> Вы не авторизованы.</div>',
@@ -135,8 +137,8 @@ else {
         header('Location: login.php');
         exit();
       } else 
-      if (!empty($passu) && md5($passu)!==$value['pass']) {
-        setcookie('wrong',1);
+      if (!empty($passu) && md5($passu)!=$value['pass']) {
+        setcookie('wrong',$passu);
         setcookie('pass',1,time()-100);
         setcookie('pass',$passu);
         header('Location: login.php');
