@@ -137,13 +137,14 @@ else {
         header('Location: login.php');
         exit();
       } else 
-      if (!empty($passu) && md5($passu)!=$value['pass']) {
-        setcookie('wrong',$passu);
-        setcookie('pass',1,time()-100);
-        setcookie('pass',$passu);
-        header('Location: login.php');
-        exit();
-      } else
+      // if (!empty($passu) && md5($passu)!=$value['pass']) {
+      //   setcookie('wrong',$passu);
+      //   setcookie('pass',1,time()-100);
+      //   setcookie('pass',$passu);
+      //   header('Location: login.php');
+      //   exit();
+      // } else 
+      if(md5($passu)===$value['pass'])
       { //Если все ок, то авторизуем пользователя.
         setcookie('all_OK',1);
         session_start();
