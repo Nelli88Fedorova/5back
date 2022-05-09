@@ -110,7 +110,7 @@ else {
     }
   } else
   if ($enterlog == 1) //Вход
-  {
+  {$value;
     if (!empty($loginu) && !empty($passu))
     {
       //  Проверть есть ли такой логин и пароль в базе данных.
